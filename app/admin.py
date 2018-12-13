@@ -4,7 +4,7 @@ from .models import *
 
 admin.site.register(Students)
 
-admin.site.register(CourseType)
+admin.site.register(ClassType)
 admin.site.register(Courses)
 admin.site.register(Departments)
 admin.site.register(Teachers)

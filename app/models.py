@@ -3,6 +3,7 @@ from django.db import models
 # Create your models here.
 # 原型类<<<-----------------------------------------------------------------
 
+
 class Teachers(models.Model):
 
     tid = models.IntegerField(unique=True, primary_key=True)
@@ -31,20 +32,24 @@ class Students(models.Model):
 
 
 # 课程类别
-class CourseType(models.Model):
-
-    uuid = models.UUIDField(primary_key=True)
+class ClassType(models.Model):
     name = models.CharField(max_length=20,unique=True)
+    description = models.CharField(max_length=100)
     # created_date = models.DateTimeField()
 
 
-# 课程类,不是实际上课时的。是可以复用的，
+class CourseStatus(models.Model):
+
+    status = models.CharField(max_length=20)
+    description = models.CharField(max_length=100)
+
+
+# 具体课程类
 class Courses(models.Model):
 
     uuid = models.UUIDField()
     course_code = models.CharField(max_length=10,unique=True)
-    coursetype = models.ForeignKey(CourseType,on_delete=models.CASCADE)
-    status = models.CharField(max_length=10)
+    courseStatus = models.ForeignKey(CourseStatus, on_delete=models.CASCADE)
     # created_date = models.DateTimeField()
 
 
@@ -57,31 +62,14 @@ class Terms(models.Model):
     # created_date = models.DateTimeField()
 
 
+class TermStatus(models.Model):
+    pass
+
+
+# 课程类,不是实际上课时的。是可以复用的，
 class Classes(models.Model):
-    uuid = models.UUIDField()
-    coupirse = models.ForeignKey(Courses,on_delete=models.CASCADE)
-    class_begin = models.DateTimeField()
-    class_end = models.DateTimeField()
+    class_id = models.CharField(max_length=10,unique=True)
     term = models.ForeignKey(Terms,on_delete=models.CASCADE)
     capacity = models.IntegerField()
     status = models.CharField(max_length=10)
     # created_date = models.DateTimeField()
-
-    # 课程和老师的关系是一对多
-# 原型类>>>-----------------------------------------------------------------
-
-# 关系类<<<-----------------------------------------------------------------
-class ClassTeacher_rel(models.Model):
-    uuid = models.UUIDField()
-    teacher_id = models.ForeignKey(Teachers,on_delete=models.CASCADE)
-    classid = models.ForeignKey(Classes,on_delete=models.CASCADE)
-    status = models.CharField(max_length=10)
-    # created_date = models.DateTimeField()
-
-class ClassStudent_rel(models.Model):
-    uuid = models.UUIDField()
-    student = models.ForeignKey(Students,on_delete=models.CASCADE)
-    classid = models.ForeignKey(Classes,on_delete=models.CASCADE)
-    status = models.CharField(max_length=10)
-    # created_date = models.DateTimeField()
-# 关系类>>>-----------------------------------------------------------------
