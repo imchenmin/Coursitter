@@ -15,7 +15,16 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-
+from app import  views
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('login/<str:username>/<str:code>',views.auth_view),
+    path('course/',views.get_all_course),
+    path('course/query/<int:course_id>',views.get_course_info),
+    path('course/del/<int:course_id>',views.del_course),
+    path('course/add/<int:course_id>/<str:name>/<str:name>/<int:score>/<str:introduction>/<str:prerequistied>',views.add_course),
+    path('course/class/',views.get_all_class),
+    path('course/class/query/<int:course_id>',views.get_all_class),
+    path('course/class/del/<int:course_id>',views.del_class),
+    path('course/class/add/<str:id>/<int:capacity>/<str:status>/<int:term_id>/<int:course_id>',views.add_class),
 ]
