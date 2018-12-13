@@ -7,3 +7,4 @@ def classlist():
 
 def index(request):
     #todo 查询所有课程对象
+    pass
