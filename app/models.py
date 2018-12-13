@@ -46,8 +46,6 @@ class CourseStatus(models.Model):
 
 # 具体课程类
 class Courses(models.Model):
-
-    uuid = models.UUIDField()
     course_code = models.CharField(max_length=10,unique=True)
     courseStatus = models.ForeignKey(CourseStatus, on_delete=models.CASCADE)
     # created_date = models.DateTimeField()
@@ -66,10 +64,26 @@ class TermStatus(models.Model):
     pass
 
 
-# 课程类,不是实际上课时的。是可以复用的，
+# 是实际上课时的。是可以复用的，
 class Classes(models.Model):
-    class_id = models.CharField(max_length=10,unique=True)
     term = models.ForeignKey(Terms,on_delete=models.CASCADE)
+    course = models.ForeignKey(Courses,on_delete=models.CASCADE,null=True)
     capacity = models.IntegerField()
     status = models.CharField(max_length=10)
     # created_date = models.DateTimeField()
+
+class rel_SCtable(models.Model):
+    status = models.CharField(max_length=20)
+    des = models.TextField()
+
+
+# 总的课程表，包括预选课
+class SCtable(models.Model):
+    studentobj = models.ForeignKey(Students,on_delete=models.CASCADE)
+    classobj = models.ForeignKey(Classes, on_delete=models.CASCADE)
+    coin = models.IntegerField(blank=True)
+    status = models.ForeignKey(rel_SCtable,on_delete=models.CASCADE)
+
+    def __str__(self):
+        return "{}{}".format(self.studentobj.name,self.studentobj.id,self.classobj.course.course_code)
+
