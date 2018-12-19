@@ -1,6 +1,7 @@
 from django.db import models
 
-# Create your models here.
+
+
 # 原型类<<<-----------------------------------------------------------------
 
 
@@ -49,7 +50,7 @@ class Terms(models.Model):
         return self.name
 
 
-# 课程类别
+# 课程类别，属于培养方案
 class CourseType(models.Model):
     name = models.CharField(max_length=20,unique=True)
     des = models.TextField(null=True)    # created_date = models.DateTimeField()
@@ -62,16 +63,18 @@ class CourseType(models.Model):
 class Courses(models.Model):
     course_code = models.CharField(max_length=10,unique=True)
     des = models.TextField(null=True)
+    grade = models.IntegerField(default=0)
     # created_date = models.DateTimeField()
 
     def __str__(self):
-        return self.course_code
+        return self.course_code + '' + str(self.grade)
 
 
 class ClassStatus(models.Model):
 
     status = models.CharField(max_length=20)
     des = models.TextField(null=True)
+
     def __str__(self):
         return self.status
 
@@ -89,15 +92,39 @@ class Classes(models.Model):
         return self.course.course_code
 
 
+# 第一节，第二节。。。。。具体在一天的什么时间。方便冬夏换课时。
+class TimeType(models.Model):
+    id = models.IntegerField(primary_key=True)
+    timeStamp = models.CharField(max_length=20)
+    timeInterval = models.IntegerField(default=50)    #in minutes
+
+    def __str__(self):
+        return "{} {}".format(self.id,self.timeStamp)
+
+
+class ClassTime(models.Model):
+    classId = models.ForeignKey(Classes,on_delete=models.CASCADE)
+    beganWeek = models.IntegerField()
+    endWeek = models.IntegerField()
+    inweek = models.IntegerField()
+    beganInterval = models.ForeignKey(TimeType, on_delete=models.CASCADE,related_name='beganInterval')
+    endInterval = models.ForeignKey(TimeType, on_delete=models.CASCADE,related_name='endInterval')
+
+    def __str__(self):
+        return '{} week:{} - {} from  {} to {}+{}minutes in  {}'.format(self.classId,self.beganWeek,self.endWeek,self.beganInterval,self.endInterval,self.endInterval.timeInterval,self.inweek)
+
+
+# 学生的选课状态
 class RelStuCtable(models.Model):
     status = models.CharField(max_length=20)
     des = models.TextField(null=True)
+
     def __str__(self):
-        return self.status
+        return self.status+self.des
 
 
 # 总的课程表，包括预选课
-class StuCtable(models.Model):
+class StuClasstable(models.Model):
     studentobj = models.ForeignKey(Students,on_delete=models.CASCADE)
     classobj = models.ForeignKey(Classes, on_delete=models.CASCADE)
     coin = models.IntegerField(blank=True)
@@ -106,10 +133,12 @@ class StuCtable(models.Model):
     def __str__(self):
         return "{}{}. class {}".format(self.studentobj.name,self.studentobj.sid,self.classobj.course.course_code, self.classobj.course.course_code)
 
+
 class RelCourse(models.Model):
     current = models.ForeignKey(Courses,on_delete=models.CASCADE,related_name='current')
     prerequisites = models.ForeignKey(Courses, on_delete=models.CASCADE,related_name='prerequisites')
     department = models.ForeignKey(Departments, on_delete=models.CASCADE)
+    courseType = models.ForeignKey(CourseType, on_delete=models.CASCADE,related_name='courseType',default=1)
 
     def __str__(self):
-        return "{}->{} for {}".format(self.prerequisites.course_code,self.current.course_code,self.department)
+        return "{}->{} for {}. Is type:{}".format(self.prerequisites.course_code,self.current.course_code,self.department,self.courseType.name)
