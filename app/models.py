@@ -87,6 +87,7 @@ class Classes(models.Model):
     status = models.ForeignKey(ClassStatus,on_delete=models.CASCADE)
     # created_date = models.DateTimeField()
     teacher = models.ForeignKey(Teachers, on_delete=models.CASCADE,default=1)
+    location = models.CharField(max_length=50, default="none")
 
     def __str__(self):
         return self.course.course_code
