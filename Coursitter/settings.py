@@ -26,7 +26,8 @@ SECRET_KEY = '7wul0o5og1-lxwtg5r=**^8@0j&e11o1c&jd7*)t4u4i60=l*9'
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    '10.21.7.213'
+    '10.21.7.213',
+    '127.0.0.1'
 ]
 
 
@@ -57,7 +58,10 @@ ROOT_URLCONF = 'Coursitter.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')]
+        'DIRS': [os.path.join(BASE_DIR, 'templates'),
+                os.path.join(BASE_DIR, 'app/static/html'),
+                os.path.join(BASE_DIR, 'app/static/css'),
+                ]
         ,
         'APP_DIRS': True,
         'OPTIONS': {
@@ -121,4 +125,4 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_URL = "/static/"

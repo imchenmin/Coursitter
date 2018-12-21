@@ -1,5 +1,6 @@
 from django.db import models
 from  django.utils import timezone
+from django.contrib.auth.models import AbstractBaseUser
 
 
 # 原型类<<<-----------------------------------------------------------------
@@ -24,7 +25,7 @@ class Teachers(models.Model):
 
 
 # 创建学生类
-class Students(models.Model):
+class Students(AbstractBaseUser):
 
     sid = models.IntegerField(unique=True,primary_key=True)
     name = models.CharField(max_length=20)
