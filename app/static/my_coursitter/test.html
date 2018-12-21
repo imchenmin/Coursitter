@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>01获取父节点</title>
+	</head>
+	<body>
+		<ul id="nodeid">
+			<li>小米</li>
+			<li id="chuizi">锤子</li>
+			<li>华为</li>
+		</ul>
+		<script>
+			//测试parentElement和parentNode的区别
+			/*
+			            parentNode - 获取父节点
+			            父级节点可以是所有节点类型，包括文档节点
+			             
+			            parentElement - 获取父元素节点
+			            父级必须是元素节点 -> 其实就必须是HTML的标签
+			            <html>标签的父元素节点是null
+			        */
+			//查询节点位置
+			var nodeid = document.getElementById('chuizi');
+			//获取父节点
+			alert(nodeid.parentElement); //获取了ul节点
+			alert(nodeid.parentNode); //获取了ul节点
+
+			//在顶级元素节点上测试
+			var html = document.documentElement; //属性可返回文档的根节点
+			alert(html.parentElement); //null
+			alert(html.parentNode); //#document文档节点
+
+			//总结:如果获取的不是顶级元素节点的情况下，两者都是可以使用
+			//parentElement匹配的是parent为element(元素)的情况，而parentNode匹配的则是parent为node(节点)的情况。
+		</script>
+	</body>
+</html>

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html style="height: 100%;">
+	<head>
+		<meta charset="utf-8" />
+		<title></title>
+		<script src="http://code.jquery.com/jquery-3.2.1.min.js"></script>
+		<!-- <script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script> -->
+		<link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+		<link href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+		<link rel="stylesheet" type="text/css" href="css/main.css" />
+		<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+		<script src="js/jsMove.js"></script>
+		<script src="js/test.js"></script>
+		<script src="js/classes.js"></script>
+		<link rel="stylesheet" type="text/css" href="css/zldcss.css" />
+		<script type="text/javascript">
+			window.onload = function() {
+				var oDiv1 = document.getElementById('div1');
+				var oBtn = document.getElementById('span');
+				var begin = getStyle(oDiv1, 'left')
+				begin = parseInt(begin.substr(0, begin.length - 2));
+// 				oDiv1.onmouseover = function() {
+// 					startMove(oDiv1, 'left', begin + oDiv1.offsetWidth);
+// 				}
+// 				oDiv1.onmouseout = function() {
+// 					startMove(oDiv1, 'left', begin);
+// 				}
+				var oUl_course = document.getElementById('courseList');
+				var oBtn_insert = document.getElementById('insert');
+				oBtn_insert.onclick = insertCard;
+			};
+		</script>
+	</head>
+	<body>
+		<div class="bg">
+
+			<div id='insert' class="insert">
+				插入卡片
+			</div>
+			<div id="div1" class="outer">
+				<div id='span' class="span mdui-ripple mdui-btn-raised">
+					排课信息
+				</div>
+				<div style="background: rgba(0, 0, 0, 0.3);width: 100%; height: 100%;">
+					<div style="height: 100%; padding: 40px;">
+						<div style="overflow: hidden; float: left; width: 320px; height: 100%;">
+							<div id="card-contain" class="card-contain">
+								<ul id="courseList" style="list-style: none;">
+									<!-- 这里插入课程 -->
+								</ul>
+							</div>
+						</div>
+						<div id="table-contain" class="table-contain">
+							<table class="table" style="height: 100%;">
+								<thead class="tbody2">
+									<td></td>
+									<td>星期一</td>
+									<td>星期二</td>
+									<td>星期三</td>
+									<td>星期四</td>
+									<td>星期五</td>
+									<td>星期六</td>
+									<td>星期日</td>
+								</thead>
+								<tbody id="classtable">
+									<tr class="tbody1">
+										<td class="rowhead">第一大节</td>
+										<td>...</td>
+										<td>...</td>
+										<td>...</td>
+										<td>...</td>
+										<td>...</td>
+										<td>...</td>
+										<td>...</td>
+									</tr>
+									<tr class="tbody1">
+										<td class="rowhead">第二大节</td>
+										<td>...</td>
+										<td>...</td>
+										<td>...</td>
+										<td>...</td>
+										<td>...</td>
+										<td>...</td>
+										<td>...</td>
+									</tr>
+									<tr class="tbody2">
+										<td colspan="8">午休</td>
+									</tr>
+									<tr class="tbody1">
+										<td class="rowhead">第三大节</td>
+										<td>...</td>
+										<td>...</td>
+										<td>...</td>
+										<td>...</td>
+										<td>...</td>
+										<td>...</td>
+										<td>...</td>
+									</tr>
+									<tr class="tbody1">
+										<td class="rowhead">第四大节</td>
+										<td>...</td>
+										<td>...</td>
+										<td>...</td>
+										<td>...</td>
+										<td>...</td>
+										<td>...</td>
+										<td>...</td>
+									</tr>
+									<tr class="tbody2">
+										<td colspan="8">晚饭</td>
+									</tr>
+									<tr class="
+										 tbody1">
+										<td class="rowhead">第五大节</td>
+										<td>...</td>
+										<td>...</td>
+										<td>...</td>
+										<td>...</td>
+										<td>...</td>
+										<td>...</td>
+										<td>...</td>
+									</tr>
+								</tbody>
+
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
