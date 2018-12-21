@@ -1,5 +1,5 @@
 from django.db import models
-
+from  django.utils import timezone
 
 
 # 原型类<<<-----------------------------------------------------------------
@@ -44,6 +44,9 @@ class Terms(models.Model):
     begin_date = models.DateField()
     end_date = models.DateField()
     status = models.CharField(max_length=10)
+    begin_selected = models.DateTimeField(default=timezone.now())
+    end_selected = models.DateTimeField(default=timezone.now())
+    end_modify = models.DateTimeField(default=timezone.now())
     # created_date = models.DateTimeField()
 
     def __str__(self):
