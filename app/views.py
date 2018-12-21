@@ -14,10 +14,11 @@ def login_view(request):
         password = request.POST['password']
         print('logininginging')
         user = authenticate(request, username=username, password=password)
+        print(user)
         if user is not None:
             login(request, user)
             # Redirect to a success page.
-            return render(request, "user_main.html")
+            return render(request, "")
 
             ...
         else:
@@ -31,6 +32,6 @@ def logout_view(request):
     # Redirect to a success page.
 
 
-@login_required(login_url='login')
+@login_required(login_url='/login')
 def userMain(request):
-    pass
+    return render(request, "user_main.html")
