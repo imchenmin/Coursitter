@@ -65,6 +65,7 @@ class CourseType(models.Model):
 # 具体课程类
 class Courses(models.Model):
     course_code = models.CharField(max_length=10,unique=True)
+    course_name = models.CharField(max_length=30, default='abc')
     des = models.TextField(null=True)
     grade = models.IntegerField(default=0)
     # created_date = models.DateTimeField()
@@ -143,6 +144,7 @@ class RelCourse(models.Model):
     prerequisites = models.ForeignKey(Courses, on_delete=models.CASCADE,related_name='prerequisites')
     department = models.ForeignKey(Departments, on_delete=models.CASCADE)
     courseType = models.ForeignKey(CourseType, on_delete=models.CASCADE,related_name='courseType',default=1)
+    recommandYear = models.CharField(max_length=20, default="freshman")
 
     def __str__(self):
         return "{}->{} for {}. Is type:{}".format(self.prerequisites.course_code,self.current.course_code,self.department,self.courseType.name)
