@@ -1,6 +1,6 @@
 from django.db import models
 from  django.utils import timezone
-from django.contrib.auth.models import AbstractBaseUser
+from django.contrib.auth.models import AbstractUser
 
 
 # 原型类<<<-----------------------------------------------------------------
@@ -25,19 +25,20 @@ class Teachers(models.Model):
 
 
 # 创建学生类
-class Students(AbstractBaseUser):
-
+class Students(AbstractUser):
     sid = models.IntegerField(unique=True,primary_key=True)
-    name = models.CharField(max_length=20)
+    username = models.CharField(max_length=20)
     email = models.EmailField()
     # department
-    department = models.ForeignKey(Departments,on_delete=models.CASCADE)
+    # department = models.ForeignKey(Departments,on_delete=models.CASCADE,default=0)
     # password
-    password  = models.CharField(max_length=30)
+    # password  = models.CharField(max_length=30)
     # created_date = models.DateTimeField()
 
+    USERNAME_FIELD = 'sid'
+    REQUIRED_FIELDS = ['username','email']
     def __str__(self):
-        return '{}  {}'.format(self.sid,self.name)
+        return '{}  {}'.format(self.sid,self.username)
 
 
 class Terms(models.Model):

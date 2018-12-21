@@ -3904,7 +3904,7 @@
   }();
 
   /**
-   * The `referenceObject` is an object that provides an static compatible with Popper.js
+   * The `referenceObject` is an object that provides an interface compatible with Popper.js
    * and lets you use it as replacement of a real DOM node.<br />
    * You can use this method to position a popper relatively to a set of coordinates
    * in case you don't have a DOM node to use as reference.
