@@ -1,3 +1,6 @@
+import json
+from json import JSONEncoder
+
 from django.db import models
 from  django.utils import timezone
 from django.contrib.auth.models import AbstractUser
@@ -94,6 +97,10 @@ class Classes(models.Model):
     # created_date = models.DateTimeField()
     teacher = models.ForeignKey(Teachers, on_delete=models.CASCADE,default=1)
     location = models.CharField(max_length=50, default="none")
+
+    def toJSON(self):
+        return json.dumps(self, default=lambda o: o.__dict__,
+                          sort_keys=True, indent=4)
 
     def __str__(self):
         return self.course.course_code

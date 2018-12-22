@@ -6,6 +6,10 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('searchCourse', views.searchCourseDeal),
-    path('seachLableDeal', views.seachLableDeal),
+    path('class', views.searchCourseDeal),
+    path('label', views.seachLableDeal),
+    # path('allClass', )
+    # path('mycart',) //get  post
+    path('allCourse',views.allCourse)
+    # path
 ]
