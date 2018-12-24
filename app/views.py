@@ -73,11 +73,13 @@ def seachLableDeal(request):
 # url: /checkClass
 def checkClassDeal(request):
     sid = request.user.sid
-    classid = json.loads(request.body.decode())
+    classid = parseURL_simpleSearch(request.get_full_path())
+    print(classid)
     data = [sid, classid]
     bool, strr = check(data)
     result = [bool, strr]
     # todo transfer
+    print(result)
     return HttpResponse(json.dumps(result), content_type='application/json')
 
 
@@ -127,6 +129,8 @@ def label_search(dic):
     temp_result = Classes.objects.none()
     for rel in query_set:
         a = rel.current
+        b = Classes.objects.filter(course=rel.current)
+        c = Classes.objects.all()
         temp_result = Classes.objects.filter(course=rel.current) | temp_result
     # The previous step find the classes with first three conditions
     time_label = dic['interval']
@@ -152,8 +156,11 @@ def label_search(dic):
         result1.add(ele.id)
     for ele in query_set2:
         result2.add(ele.id)
-    return result1.intersection(result2)
-
+    res = set()
+    for id in result1.intersection(result2):
+        res.add(Classes.objects.get(id=id).course)
+    print(res)
+    return res
 
 
 # todo 需要当前学期,
@@ -170,6 +177,7 @@ def fuzzy_search(con):
 
 
 def check(data):
+    print(data)
     try:
         student_id = data[0]
         course_code = data[1]
@@ -182,12 +190,14 @@ def check(data):
         for ele in needed_course:
             n_id.add(ele.prerequisites_id)
         re = n_id - c_id
-        if not re:
+        if len(re) == 1:
             return 1, 'Success'
         else:
             s = 'You need to study the following courses: '
             for ele in re:
                 c = Courses.objects.get(id=ele)
+                if c.course_name == 'null':
+                    continue
                 s = s + c.course_name + ', '
             return 0, s
     except Exception as e:

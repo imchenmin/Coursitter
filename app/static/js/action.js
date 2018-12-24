@@ -57,13 +57,26 @@ window.onload = function () {
             //rdata's type is json
             //returnClass(data);
             //alert(JSON.stringify(rdata));
-            refreshCourseTable(rdata["result"]);
+
+            var max_length = 23;
+            rdata = rdata["result"];
+            for (var i in rdata) {
+                if (rdata[i]['note'].length > max_length) {
+                    rdata[i]['note_short'] = rdata[i]['note'].substr(0, max_length) + '...';
+                } else {
+                    rdata[i]['note_short'] = rdata[i]['note'];
+                }
+            }
+
+            window.class_data = rdata;
+            $('#class_table').bootstrapTable('prepend', window.class_data);
+            // refreshCourseTable(rdata["result"]);
 
         }
     });
 
     loadCourseTable();
-    insertCard(window.class_data);
+    insertCard(window.class_data, []);
 };
 
 function loadCourseTable() {
@@ -111,11 +124,11 @@ $(document).ready(function () {
         onClickRow: function (row, $element) {
             var courseModal = $('#myModal');
             courseModal.modal('show');
-            $('#myModal h2')[0].innerHTML = row['courseName']+'('+row['courseID']+')'+'--课程信息';
+            $('#myModal h2')[0].innerHTML = row['courseName'] + '(' + row['courseID'] + ')' + '--课程信息';
             var currentCourse;
 
-            for(var i in window.class_data){
-                if (window.class_data[i]["courseID"]===row['courseID']) {
+            for (var i in window.class_data) {
+                if (window.class_data[i]["courseID"] === row['courseID']) {
                     currentCourse = window.class_data[i];
                     break;
                 }
@@ -132,7 +145,7 @@ $(document).ready(function () {
         }, {
             field: 'courseName',
             title: '课程名称',
-            class: "col-md-1"
+            class: "col-md-2"
         }, {
             field: 'credit',
             title: '学分',
@@ -142,9 +155,9 @@ $(document).ready(function () {
             title: '任课教师',
             class: "col-md-1"
         }, {
-            field: 'note',
+            field: 'note_short',
             title: '课程简介',
-            class: "col-md-8"
+            class: "col-md-7"
         },
         ],
 
@@ -154,7 +167,16 @@ $(document).ready(function () {
 
 function refreshCourseTable(rdata) {
     $('#class_table').bootstrapTable('removeAll');
-    $('#class_table').bootstrapTable('prepend', rdata);
+    var returnCourse = [];
+    for (var i in rdata) {
+        for (var c in window.class_data) {
+            if (rdata[i]['courseID'] === window.class_data[c]['courseID']) {
+                returnCourse.push(window.class_data[c]);
+                break;
+            }
+        }
+    }
+    $('#class_table').bootstrapTable('prepend', returnCourse);
 }
 
 function search_class() {
@@ -214,25 +236,25 @@ function showFullLabel() {
 function searchByLebel() {
     var datal = {"Grade": [], "Departments": [], "CourseType": [], "interval": [], "day": []}; //dictionary
 
-    $("#selected_label button").each(function(){
+    $("#selected_label button").each(function () {
         var label = this.innerHTML;
 
-            for(var key in window.labels){
-                var temp = window.labels[key];
-                var has=temp.indexOf(label)>-1;
-                if (has) {
-                    // alert(key+" "+label);
-                    datal[key].push(label);
-                    break;
-                }
-
+        for (var key in window.labels) {
+            var temp = window.labels[key];
+            var has = temp.indexOf(label) > -1;
+            if (has) {
+                // alert(key+" "+label);
+                datal[key].push(label);
+                break;
             }
+
+        }
 
 
     });
 
-    for(var key in datal) {
-        if (datal[key].length===0) {
+    for (var key in datal) {
+        if (datal[key].length === 0) {
             delete datal[key];
         }
     }
@@ -247,7 +269,7 @@ function searchByLebel() {
         success: function (rdata) { //成功的话，得到消息
             //rdata's type is json
             //returnClass(data);
-            refreshCourseTable(rdata);
+            refreshCourseTable(rdata['result']);
         }
     });
     // var rdata = [{
@@ -387,25 +409,27 @@ function selectCourse(obj) {
     // alert(obj.id);
     var course = window.class_data[parseInt(obj.id)];
     var courseID = course["courseID"];
+    var verified;
+    var msgg;
     $.ajax({
         type: 'GET',
         url: "/checkClass",
         anysc: false,
-        data: JSON.stringify(courseID),  //转化字符串
+        data: courseID,  //转化字符串
         contentType: 'application/json',
         dataType: 'json',
         success: function (rdata) { //成功的话，得到消息
             //rdata's type is json
             //returnClass(data);
-            var verified = rdata[0] === "1";
-            var msg = rdata[1];
+            verified = rdata[0] === 1;
+            msgg = rdata[1];
+            if (verified) {
+                insertCard([course], []);
+            } else {
+                alert(msgg)
+            }
         }
     });
-    if (verified) {
-        insertCard([course]);
-        // TODO 选课成功后的判断
-    } else {
-        alert(msg)
-    }
+
 }
 
