@@ -21,5 +21,10 @@ urlpatterns = [
     path('login/', views.login_view),
     path('logout/',views.logout_view),
     path('', views.userMain),
-    path('api/',include('app.urls')),
+    path('searchCourse/', views.searchCourseDeal),
+    path('searchLabel/', views.seachLableDeal),
+    path('allCourse/', views.allCourse),
+    path('classADD/', views.addClassDeal),
+    path('classDELETE/', views.deleteClassDeal),
+    path('checkClass/', views.checkClassDeal)
 ]

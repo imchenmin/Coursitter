@@ -1,5 +1,6 @@
 body {
     background: url("../img/5.jpg") no-repeat;
+    /*background: url("/static/img/5.jpg") no-repeat;*/
     height: 100%;
     min-height: 700px;
     background-size: 100%;
