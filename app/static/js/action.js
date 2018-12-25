@@ -68,7 +68,7 @@ window.onload = function () {
                     rdata[i]['note_short'] = rdata[i]['note'];
                 }
             }
-
+            //TODO 任课老师
             window.class_data = rdata;
             $('#class_table').bootstrapTable('prepend', window.class_data);
             // refreshCourseTable(rdata["result"]);
@@ -139,7 +139,7 @@ $(document).ready(function () {
             courseModal.modal('show');
             $('#myModal h2')[0].innerHTML = row['courseName'] + '(' + row['courseID'] + ')' + '--课程信息';
             var currentCourse;
-
+            //TODO 课程卡片
             var flag = false;
 
             for (i in window.selectedCourse) {
@@ -418,6 +418,7 @@ function copy(obj) {
 }
 
 function select_label(obj) {
+    //TODO 标签数量最大值
     if (obj.title === "unselected") {
         // obj.classList.replace("btn-info", "btn-success");
         obj.setAttribute("class", "w3-btn w3-indigo w3-border col-md-3 ");
@@ -477,7 +478,7 @@ function selectCourse(obj) {
             }
         }
 
-        //TODO 删除卡片的方法
+        //TODO 课程表删除已选课程的方法
         deleteById(courseID);
     } else {
         $.ajax({
@@ -498,7 +499,8 @@ function selectCourse(obj) {
                     obj.innerHTML = "取消选择";
                     obj.value = "selected";
                     obj.setAttribute("class", 'w3-btn w3-red');
-                    window.selectedCourse.push({'courseID': courseID})
+                    window.selectedCourse.push({'courseID': courseID});
+                    //fixme
                     insertCard([course]);
 
 

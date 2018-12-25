@@ -276,8 +276,8 @@ function simulationClick(course){
   aCards = document.getElementsByClassName('card');
   for (var i = 0; i < aCards.length; i++) {
     tempid = aCards[i].firstElementChild.innerHTML.split(' ')[0];
-    tempcoin = course[tempid].data.coin;
-    tempclassnum = course[tempid].data.classnum;
+    tempcoin = course[tempid].coin;
+    tempclassnum = course[tempid].classnum;
     tempinput = aCards[i].getElementsByClassName('mytxt')[0];
     tempinput.value = tempcoin;
     aClasses = aCards[i].getElementsByClassName('class-selector');
