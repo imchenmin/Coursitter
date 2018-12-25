@@ -156,7 +156,7 @@ $(document).ready(function () {
         }, {
             field: 'courseName',
             title: '课程名称',
-            class: "col-md-2"
+            class: "col-md-3"
         }, {
             field: 'credit',
             title: '学分',
@@ -168,7 +168,7 @@ $(document).ready(function () {
         }, {
             field: 'note_short',
             title: '课程简介',
-            class: "col-md-7"
+            class: "col-md-6"
         },
         ],
 
@@ -398,15 +398,16 @@ function select_label(obj) {
         obj.setAttribute("title", "unselected");
         var shown = document.getElementById("show_" + obj.id);
         document.getElementById("selected_label").removeChild(shown);
-    } else {
-        var cname = obj.id;
-        var true_name = cname.substring(5);
-        obj.parentElement.removeChild(obj);
-        obj = document.getElementById(true_name);
-        obj.classList.replace("btn-success", "btn-info");
-        obj.setAttribute("class", "w3-btn w3-white w3-border w3-border col-md-3");
-        obj.setAttribute("title", "unselected");
     }
+    // else {
+    //     var cname = obj.id;
+    //     var true_name = cname.substring(5);
+    //     obj.parentElement.removeChild(obj);
+    //     obj = document.getElementById(true_name);
+    //     // obj.classList.replace("btn-success", "btn-info");
+    //     obj.setAttribute("class", "w3-btn w3-white w3-border w3-border col-md-3");
+    //     obj.setAttribute("title", "unselected");
+    // }
 }
 
 
@@ -426,8 +427,8 @@ function selectCourse(obj) {
         obj.innerHTML = "选择课程";
         obj.value = "unselected";
         obj.setAttribute("class",'w3-btn c5') ;
-        // TODO 需要删除卡片的方法
-        //deleteCard();
+        // 删除卡片的方法
+        deleteById(courseID);
     } else {
         $.ajax({
             type: 'GET',
@@ -448,7 +449,7 @@ function selectCourse(obj) {
                     obj.value = "selected";
                     obj.setAttribute("class",'w3-btn w3-red') ;
 
-                    // insertCard([course], []);
+                    insertCard([course], []);
 
 
                 } else {

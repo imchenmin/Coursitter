@@ -92,7 +92,7 @@ function fillTable(obj) {
 	oUl = oDiv.parentElement.parentElement;
 	aBtns = oUl.getElementsByClassName('btn mybtn-select-active');
 	period = oDiv.dataset.period.split(',');
-	name = oDiv.dataset.coursename;
+	var name = oDiv.dataset.coursename;
 	id = oDiv.dataset.courseid;
 	info = oDiv.dataset.classinfo.split(',');
 	teachers = oDiv.dataset.teachers;
@@ -174,6 +174,15 @@ function fillTable(obj) {
 		aReplacer[0].setAttribute('style','display:unset');
 	}
 	updateRcoin();
+}
+
+function deleteById(courseid){
+    aCards = document.getElementsByClassName('card-header');
+    for (var i = 0; i < aCards.length; i++) {
+        if(courseid == aCards[i].innerHTML.split(' ')[0]){
+            removeLi(aCards[i]);
+        }
+    }
 }
 
 function removeLi(obj) {
@@ -267,8 +276,8 @@ function simulationClick(course){
   aCards = document.getElementsByClassName('card');
   for (var i = 0; i < aCards.length; i++) {
     tempid = aCards[i].firstElementChild.innerHTML.split(' ')[0];
-    tempcoin = course[tempid].coin;
-    tempclassnum = course[tempid].classnum;
+    tempcoin = course[tempid].data.coin;
+    tempclassnum = course[tempid].data.classnum;
     tempinput = aCards[i].getElementsByClassName('mytxt')[0];
     tempinput.value = tempcoin;
     aClasses = aCards[i].getElementsByClassName('class-selector');
