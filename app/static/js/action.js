@@ -192,21 +192,30 @@ function refreshCourseTable(rdata) {
 
 function search_class() {
     var data = $('#searchContent').val(); //string
-    $.ajax({
-        type: 'GET',
-        url: "/searchCourse",
-        anysc: false,
-        data: data,  //转化字符串
-        contentType: 'application/json',
-        dataType: 'json',
-        success: function (rdata) { //成功的话，得到消息
-            //rdata's type is json
-            //returnClass(data);
-            //alert(JSON.stringify(rdata));
-            refreshCourseTable(rdata["result"]);
 
-        }
-    });
+    if (data) {
+        $.ajax({
+            type: 'GET',
+            url: "/searchCourse",
+            anysc: false,
+            data: data,  //转化字符串
+            contentType: 'application/json',
+            dataType: 'json',
+            success: function (rdata) { //成功的话，得到消息
+                //rdata's type is json
+                //returnClass(data);
+                //alert(JSON.stringify(rdata));
+                refreshCourseTable(rdata["result"]);
+
+            }
+        });
+    } else {
+        $('#class_table').bootstrapTable('removeAll');
+        $('#class_table').bootstrapTable('prepend', window.class_data);
+
+    }
+
+
     // var rdata = [{
     //     "courseName": "面向对象",
     //     "courseID": "CS303",
@@ -244,7 +253,7 @@ function showFullLabel() {
 
 }
 
-function searchByLebel() {
+function searchByLabel() {
     var datal = {"Grade": [], "Departments": [], "CourseType": [], "interval": [], "day": []}; //dictionary
 
     $("#selected_label button").each(function () {
@@ -263,26 +272,36 @@ function searchByLebel() {
 
 
     });
-
+    var count = 0;
     for (var key in datal) {
         if (datal[key].length === 0) {
             delete datal[key];
+        } else {
+            count++;
         }
     }
 
-    $.ajax({
-        type: 'GET',
-        url: "/searchLabel",
-        anysc: false,
-        data: datal,  //转化字符串
-        contentType: 'application/json',
-        dataType: 'json',
-        success: function (rdata) { //成功的话，得到消息
-            //rdata's type is json
-            //returnClass(data);
-            refreshCourseTable(rdata['result']);
-        }
-    });
+    if (count > 0) {
+        $.ajax({
+            type: 'GET',
+            url: "/searchLabel",
+            anysc: false,
+            data: datal,  //转化字符串
+            contentType: 'application/json',
+            dataType: 'json',
+            success: function (rdata) { //成功的话，得到消息
+                //rdata's type is json
+                //returnClass(data);
+                refreshCourseTable(rdata['result']);
+            }
+        });
+    } else {
+        $('#class_table').bootstrapTable('removeAll');
+        $('#class_table').bootstrapTable('prepend', window.class_data);
+
+    }
+
+
     // var rdata = [{
     //     "courseName": "人工智能",
     //     "courseID": "CS303",
@@ -323,7 +342,7 @@ function showSelectedLabel() {
     document.getElementById("all_label").style.display = "none";
     document.getElementById("selected_label").classList.replace("col-md-2", "col-md-12");
 
-    searchByLebel();
+    searchByLabel();
 }
 
 function generate_labels() {
@@ -399,15 +418,16 @@ function select_label(obj) {
         var shown = document.getElementById("show_" + obj.id);
         document.getElementById("selected_label").removeChild(shown);
     }
-    // else {
-    //     var cname = obj.id;
-    //     var true_name = cname.substring(5);
-    //     obj.parentElement.removeChild(obj);
-    //     obj = document.getElementById(true_name);
-    //     // obj.classList.replace("btn-success", "btn-info");
-    //     obj.setAttribute("class", "w3-btn w3-white w3-border w3-border col-md-3");
-    //     obj.setAttribute("title", "unselected");
-    // }
+    else {
+        var cname = obj.id;
+        var true_name = cname.substring(5);
+        obj.parentElement.removeChild(obj);
+        obj = document.getElementById(true_name);
+        // obj.classList.replace("btn-success", "btn-info");
+        obj.setAttribute("class", "w3-btn w3-white w3-border w3-border col-md-3");
+        obj.setAttribute("title", "unselected");
+        searchByLabel();
+    }
 }
 
 
@@ -423,11 +443,11 @@ function selectCourse(obj) {
     var courseID = course["courseID"];
     var verified;
     var msg;
-    if (obj.value==='selected') {
+    if (obj.value === 'selected') {
         obj.innerHTML = "选择课程";
         obj.value = "unselected";
-        obj.setAttribute("class",'w3-btn c5') ;
-        // 删除卡片的方法
+        obj.setAttribute("class", 'w3-btn c5');
+        //TODO 删除卡片的方法
         deleteById(courseID);
     } else {
         $.ajax({
@@ -447,9 +467,9 @@ function selectCourse(obj) {
                 if (verified) {
                     obj.innerHTML = "取消选择";
                     obj.value = "selected";
-                    obj.setAttribute("class",'w3-btn w3-red') ;
+                    obj.setAttribute("class", 'w3-btn w3-red');
 
-                    insertCard([course], []);
+                    // insertCard([course], []);
 
 
                 } else {
