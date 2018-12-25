@@ -109,7 +109,7 @@ function fillTable(obj) {
 	if (coin === '') {
 		alert("您还未分配选课币！");
 		return;
-	} else if (isNaN(coin) || coin < 0) {
+	} else if (isNaN(coin) || coin < 0 || coin%1 !== 0) {
 		alert("请输入一个正整数!");
 		return;
 	} 
