@@ -420,6 +420,7 @@ function select_label(obj) {
 function selectCourse(obj) {
     // alert(obj.id);
     var course = window.class_data[parseInt(obj.id)];
+    console.log(course)
     var courseID = course["courseID"];
     var verified;
     var msg;
@@ -449,7 +450,7 @@ function selectCourse(obj) {
                     obj.value = "selected";
                     obj.setAttribute("class",'w3-btn w3-red') ;
 
-                    insertCard([course], []);
+                    insertCard([course], {});
 
 
                 } else {

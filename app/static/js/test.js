@@ -45,7 +45,9 @@ function insertCard(course, history) {
     oLi.innerHTML = addCourse(course[i]);
     oUl_course.appendChild(oLi);
   }
-  if (history){
+  console.log("the history is")
+  console.log(JSON.stringify(history) == "{}")
+  if (JSON.stringify(history) != "{}"){
     simulationClick(history);
     //course的结构是{courseid:{coin:123, classnum: 100}, ...}
   }
@@ -276,8 +278,8 @@ function simulationClick(course){
   aCards = document.getElementsByClassName('card');
   for (var i = 0; i < aCards.length; i++) {
     tempid = aCards[i].firstElementChild.innerHTML.split(' ')[0];
-    tempcoin = course[tempid].data.coin;
-    tempclassnum = course[tempid].data.classnum;
+    tempcoin = course[tempid].dataset.coin;
+    tempclassnum = course[tempid].dataset.classnum;
     tempinput = aCards[i].getElementsByClassName('mytxt')[0];
     tempinput.value = tempcoin;
     aClasses = aCards[i].getElementsByClassName('class-selector');
