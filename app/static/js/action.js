@@ -421,26 +421,42 @@ function selectCourse(obj) {
     var course = window.class_data[parseInt(obj.id)];
     var courseID = course["courseID"];
     var verified;
-    var msgg;
-    $.ajax({
-        type: 'GET',
-        url: "/checkClass",
-        anysc: false,
-        data: courseID,  //转化字符串
-        contentType: 'application/json',
-        dataType: 'json',
-        success: function (rdata) { //成功的话，得到消息
-            //rdata's type is json
-            //returnClass(data);
-            verified = rdata[0] === 1;
-            msgg = rdata[1];
-            if (verified) {
-                insertCard([course], []);
-            } else {
-                alert(msgg)
+    var msg;
+    if (obj.value==='selected') {
+        obj.innerHTML = "选择课程";
+        obj.value = "unselected";
+        obj.setAttribute("class",'w3-btn c5') ;
+        // TODO 需要删除卡片的方法
+        //deleteCard();
+    } else {
+        $.ajax({
+            type: 'GET',
+            url: "/checkClass",
+            anysc: false,
+            data: courseID,  //转化字符串
+            contentType: 'application/json',
+            dataType: 'json',
+            success: function (rdata) { //成功的话，得到消息
+                //rdata's type is json
+                //returnClass(data);
+                verified = rdata[0] === 1;
+                msg = rdata[1];
+
+
+                if (verified) {
+                    obj.innerHTML = "取消选择";
+                    obj.value = "selected";
+                    obj.setAttribute("class",'w3-btn w3-red') ;
+
+                    // insertCard([course], []);
+
+
+                } else {
+                    alert(msg)
+                }
             }
-        }
-    });
+        });
+    }
 
 }
 
