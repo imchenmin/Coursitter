@@ -8,6 +8,35 @@ window.rcoin = 10000;
 // }
 // 
 
+function getCookie(name) {
+                var cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    var cookies = document.cookie.split(';');
+                    for (var i = 0; i < cookies.length; i++) {
+                        var cookie = jQuery.trim(cookies[i]);
+                        // Does this cookie string begin with the name we want?
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+            var csrftoken = getCookie('csrftoken');
+
+            function csrfSafeMethod(method) {
+                // 这些HTTP方法不要求CSRF包含
+                return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+            }
+            $.ajaxSetup({
+                beforeSend: function(xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+
 function insertCard(course, history) {
   var oUl_course = document.getElementById('courseList');
   // var testCourse = getInfo();
@@ -76,15 +105,15 @@ function fillTable(obj) {
 	for (i in info){
 		classinfo += "<p>" + info[i] + "</p>";
 	}
-	if (coin == '') {
-		alert("您还未分配选课币！")
+	if (coin === '') {
+		alert("您还未分配选课币！");
 		return;
 	} else if (isNaN(coin) || coin < 0) {
-		alert("请输入一个正整数!")
+		alert("请输入一个正整数!");
 		return;
 	} 
 
-	if (obj.className == "btn mybtn-select-active") {
+	if (obj.className === "btn mybtn-select-active") {
 		clearThisClass(ot, period);
 		obj.setAttribute("class","btn mybtn-select");
 		window.rcoin += parseInt(window.data[id].coin);

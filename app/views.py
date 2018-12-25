@@ -190,7 +190,7 @@ def check(data):
         for ele in needed_course:
             n_id.add(ele.prerequisites_id)
         re = n_id - c_id
-        if len(re) == 1:
+        if len(re) == 1 and Courses.objects.get(id=re.pop()).course_name == 'null':
             return 1, 'Success'
         else:
             s = 'You need to study the following courses: '
