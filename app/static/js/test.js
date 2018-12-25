@@ -45,7 +45,7 @@ function insertCard(course, history={}) {
     oLi.innerHTML = addCourse(course[i]);
     oUl_course.appendChild(oLi);
   }
-  if (history){
+  if (JSON.stringify(history) !== "{}"){
     simulationClick(history);
     //course的结构是{courseid:{coin:123, classnum: 100}, ...}
   }
