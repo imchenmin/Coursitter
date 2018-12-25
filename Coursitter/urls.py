@@ -26,5 +26,6 @@ urlpatterns = [
     path('allCourse/', views.allCourse),
     path('classADD/', views.addClassDeal),
     path('classDELETE/', views.deleteClassDeal),
-    path('checkClass/', views.checkClassDeal)
+    path('checkClass/', views.checkClassDeal),
+    path('getHistory/', views.getHistory)
 ]

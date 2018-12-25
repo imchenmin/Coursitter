@@ -103,7 +103,7 @@ class Classes(models.Model):
                           sort_keys=True, indent=4)
 
     def __str__(self):
-        return self.course.course_code
+        return 'course {} class {}'.format(self.course.course_code, self.id)
 
 
 # 第一节，第二节。。。。。具体在一天的什么时间。方便冬夏换课时。

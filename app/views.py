@@ -50,7 +50,7 @@ def searchCourseDeal(request):
     result = parseURL_simpleSearch(request.get_full_path())
     result = fuzzy_search(result)
     result = parseCourse(result)
-    #print(result)
+    # print(result)
     return HttpResponse(json.dumps(result), content_type='application/json')
     # return HttpResponse(json.dumps(result), content_type='application/json')
 
@@ -82,6 +82,13 @@ def checkClassDeal(request):
     print(result)
     return HttpResponse(json.dumps(result), content_type='application/json')
 
+@login_required(login_url='/login')
+# url: /getHistory
+def getHistory(request):
+    sid = request.user.sid
+    result = get_student_all(sid)
+    print(result)
+    return HttpResponse(json.dumps(result), content_type='application/json')
 
 @login_required(login_url='/login')
 # url: /classADD
@@ -101,6 +108,7 @@ def deleteClassDeal(request):
     tmp = json.loads(request.body.decode())
     result = dele_class(sid, tmp['classnum'])
     return HttpResponse(json.dumps(result), content_type='application/json')
+
 
 def label_search(dic):
     grade_label = dic['Grade']
@@ -155,7 +163,7 @@ def label_search(dic):
     for ele in temp_result:
         result1.add(ele.id)
     for ele in query_set2:
-        result2.add(ele.id)
+        result2.add(ele.classId.id)
     res = set()
     for id in result1.intersection(result2):
         res.add(Classes.objects.get(id=id).course)
@@ -234,10 +242,12 @@ def parseCourse(queryset):
             # print(classinfo)
             classlist.append({'classnum': j.id, 'teachers': j.teacher.name, 'classinfo': classinfo, 'period': period})
         # print(classlist)
-        courselist.append({'courseID': i.course_code, 'courseName': i.course_name,'note':i.des ,'credit':i.grade,'classes': classlist})
+        courselist.append({'courseID': i.course_code, 'courseName': i.course_name, 'note': i.des, 'credit': i.grade,
+                           'classes': classlist})
     result['result'] = courselist
     # print(result)
     return result
+
 
 def add_queue(student_id, c_id, coin):
     ju = StuClasstable.objects.filter(studentobj_id=student_id, classobj_id=c_id)
@@ -290,7 +300,7 @@ def dele_class(student_id, class_id):
 
 def write_result():
     try:
-        c=Classes.objects.all()
+        c = Classes.objects.all()
         for ele in c:
             cap = ele.capacity
             ta = StuClasstable.objects.filter(classobj_id=ele.id).order_by('-coin')
@@ -310,25 +320,47 @@ def write_result():
         return False
 
 
-
 def allCourse(request):
     # queryset = Courses.objects.filter(classes__term__status="prepare")
     queryset = Courses.objects.all()
     result = parseCourse(queryset)
-    #print(result)
+    # print(result)
     return JsonResponse(result)
+
 
 def get_student_all(student_id):
     try:
-        qs = StuClasstable.objects.filter(studentobj_id=student_id, status__status='waiting')
+        qs = StuClasstable.objects.filter(studentobj_id=student_id,
+                                          status__status='waiting') | StuClasstable.objects.filter(
+            studentobj_id=student_id, status__status='selected')
         result = []
         for ele in qs:
-            result.append((ele.classobj_id,ele.coin))
-        return result
+            result.append((ele.classobj_id, ele.coin))
+        return parse_selected_course(result)
     except Exception as e:
         print(e)
         return []
 
+
+def parse_selected_course(query_set):
+    cour = []
+    # {courseid: {coin: 123, classnum: 100}, ...}
+    for ele in query_set:
+        s = str(Classes.objects.get(id=ele[0]).course.course_code) + ' :{coin: ' + str(ele[1]) + ', classsnum:' + str(
+            ele[0]) + '}'
+        cour.append(s)
+    result = ''
+    if len(cour) == 1:
+        result = '{' + s[0] + '}'
+    else:
+        for i in range(len(cour)):
+            if i == 0:
+                result += '{' + cour[i] + ','
+            elif i == len(cour) - 1:
+                result += cour[i] + '}'
+            else:
+                result += cour[i] + ','
+    return result
 
 def parseURL(url):
     url = urllib.parse.unquote(url)

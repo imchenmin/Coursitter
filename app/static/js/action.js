@@ -74,9 +74,20 @@ window.onload = function () {
 
         }
     });
-
+    $.ajax({
+        type: 'GET',
+        url: "/getHistory",
+        anysc: false,
+        data: null,  //转化字符串
+        contentType: 'application/json',
+        dataType: 'json',
+        success: function (rdata) {
+            insertCard(window.class_data, rdata['result']);
+        }
+    });
     loadCourseTable();
-    insertCard(window.class_data, []);
+
+
 };
 
 function loadCourseTable() {

@@ -77,8 +77,9 @@ function addClass(oCourse) {
 	res += "<li><div class=\"class-selector\" data-period=" + oCourse.period + " data-coursename=\"" + oCourse.courseName +
 		"\" data-courseid=\"" + oCourse.courseID + "\" data-classinfo=\"" + oCourse.classinfo + "\" data-classnum=\"" +
 		oCourse.classnum + "\" data-teachers=\"" + oCourse.teachers + "\">";
-	for (i in oCourse.classinfo){
-		res += "<p>" + oCourse.classinfo[i] + "</p>";
+	classinfo = oCourse.classinfo.split(',');
+	for (i in classinfo){
+		res += "<p>" + classinfo[i] + "</p>";
 	}
 	res += "<p>任课教师：" + oCourse.teachers + "</p>";
 	res +="<input class=\"btn mybtn-select\" type=\"button\" name=\"btn\" id=\"btn\" value=\"select\" onclick=fillTable(this) /></div></li>";
