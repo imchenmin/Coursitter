@@ -37,7 +37,7 @@ function getCookie(name) {
                 }
             });
 
-function insertCard(course, history) {
+function insertCard(course, history={}) {
   var oUl_course = document.getElementById('courseList');
   // var testCourse = getInfo();
   for (var i = 0; i < course.length; i++) {

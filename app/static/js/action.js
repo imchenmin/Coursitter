@@ -38,6 +38,8 @@ window.labels = {
     "interval": "1-2节 3-4节 5-6节 7-8节 9-10节 11节"
 };
 
+window.selectedCourse = [];
+
 window.onload = function () {
     document.getElementById("commit_Edit").style.display = "none";
     document.getElementById("all_label").style.display = "none";
@@ -45,7 +47,6 @@ window.onload = function () {
     for (var label in labels_obj) {
         document.getElementById("all_label").appendChild(labels_obj[label]);
     }
-
     $.ajax({
         type: 'GET',
         url: "/allCourse",
@@ -82,6 +83,7 @@ window.onload = function () {
         contentType: 'application/json',
         dataType: 'json',
         success: function (rdata) {
+            // window.selectedCourse = rdata['result'];
             insertCard(window.class_data, rdata['result']);
         }
     });
@@ -137,6 +139,27 @@ $(document).ready(function () {
             courseModal.modal('show');
             $('#myModal h2')[0].innerHTML = row['courseName'] + '(' + row['courseID'] + ')' + '--课程信息';
             var currentCourse;
+
+            var flag = false;
+
+            for (i in window.selectedCourse) {
+                if (window.selectedCourse[i]['courseID'] === row['courseID']) {
+                    flag = true;
+                    break;
+                }
+
+            }
+            var obj = $('#myModal button')[1];
+            if (! flag) {
+                obj.innerHTML = "选择课程";
+                obj.value = "unselected";
+                obj.setAttribute("class", 'w3-btn c5');
+            } else {
+                obj.innerHTML = "取消选择";
+                obj.value = "selected";
+                obj.setAttribute("class", 'w3-btn w3-red');
+            }
+
 
             for (var i in window.class_data) {
                 if (window.class_data[i]["courseID"] === row['courseID']) {
@@ -447,6 +470,13 @@ function selectCourse(obj) {
         obj.innerHTML = "选择课程";
         obj.value = "unselected";
         obj.setAttribute("class", 'w3-btn c5');
+        for (var i in window.selectedCourse) {
+            if (window.selectedCourse[i]['courseID'] === courseID) {
+                window.selectedCourse.splice(i, 1);
+                break;
+            }
+        }
+
         //TODO 删除卡片的方法
         deleteById(courseID);
     } else {
@@ -468,8 +498,8 @@ function selectCourse(obj) {
                     obj.innerHTML = "取消选择";
                     obj.value = "selected";
                     obj.setAttribute("class", 'w3-btn w3-red');
-
-                    // insertCard([course], []);
+                    window.selectedCourse.push({'courseID': courseID})
+                    insertCard([course]);
 
 
                 } else {
