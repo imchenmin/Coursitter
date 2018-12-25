@@ -43,7 +43,7 @@ tbody {
     width: 75.5%;
     position: fixed;
     padding: 0;
-    height: 600px;
+    height: 605px;
 
 }
 
@@ -59,9 +59,37 @@ tbody {
     width: 100%;
 }
 
+.c1 {
+    color: #fff;
+    background-color: #0D1740;
+}
+.c2 {
+    color: #fff;
+    background-color: #16245C;
+}
+.c3 {
+    color: #000000;
+    background-color: #F8F2DC ;
+}
+.c4 {
+    color: #fff;
+    background-color: #A39F93;
+}
+.c5 {
+    color: #000000;
+    background-color: #E9CFAE;
+}
+.bg-color{
+    color: #000000;
+    background-color: #f7f7f7;
+    opacity: 0.94;
+}
+
+
+
 .btn_search {
     border-radius: 25px;
-    background-color: #ffb400;
+    /*background-color: #ffb400;*/
     height: 50px;
     font-size: 20px;
     font-family: Avenir-Black, sans-serif;
@@ -94,8 +122,6 @@ tbody {
     display: none;
 }
 
-
-
 #selected_label {
 
 }
@@ -108,6 +134,7 @@ tbody {
 .main-bg #class_table {
     width: 75%;
 }
+
 #class_table {
     z-index: 100;
     position: fixed;
@@ -117,14 +144,15 @@ tbody {
 #a {
     z-index: 100;
 }
+
 #myModal {
     margin: 8%;
     width: 80%;
     height: 80%;
 }
 
-#class_card_body{
-    height: 500px;
+#class_card_body {
+    height: 430px;
     width: 800px;
 
 }
