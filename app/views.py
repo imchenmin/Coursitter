@@ -90,7 +90,6 @@ def getHistory(request):
     sid = request.user.sid
     result = get_student_all(sid)
     print("searching history of ", sid, " result has ", len(result), "classes")
-    print(result)
     return HttpResponse(json.dumps(result), content_type='application/json')
 
 @login_required(login_url='/login')

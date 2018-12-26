@@ -105,7 +105,8 @@ window.onload = function () {
         dataType: 'json',
         success: function (rdata) {
             // window.selectedCourse = rdata['result'];
-            insertCard(window.class_data, rdata['result']);
+            alert(JSON.stringify(rdata));
+            insertCard(window.class_data, rdata);
         }
     });
     loadCourseTable();
