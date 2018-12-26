@@ -255,11 +255,11 @@ function simulationClick(course){
     tempinput.value = tempcoin;
     aClasses = aCards[i].getElementsByClassName('class-selector');
     for (var j = 0; j < aClasses.length; j++){
-      if(aClasses[j].data.classnum == tempclassnum){
+      if(aClasses[j].dataset.classnum == tempclassnum){
         var clickEvent=new MouseEvent('click',{
           altKey:true // 模拟alt键按下
         });
-        aClasses[j].getElementById('btn').dispatchEvent(clickEvent); // 派发
+        aClasses[j].getElementsByClassName('btn mybtn-select')[0].dispatchEvent(clickEvent); // 派发
       }
     }
   }

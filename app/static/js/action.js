@@ -47,6 +47,8 @@ window.onload = function () {
     for (var label in labels_obj) {
         document.getElementById("all_label").appendChild(labels_obj[label]);
     }
+
+    //alert("begin history");
     $.ajax({
         type: 'GET',
         url: "/allCourse",
@@ -58,7 +60,6 @@ window.onload = function () {
             //rdata's type is json
             //returnClass(data);
             //alert(JSON.stringify(rdata));
-
             var max_length = 23;
             rdata = rdata["result"];
             for (var i in rdata) {
@@ -90,29 +91,44 @@ window.onload = function () {
             }
 
             window.class_data = rdata;
+            console.log(window.class_data)
             $('#class_table').bootstrapTable('prepend', window.class_data);
             // refreshCourseTable(rdata["result"]);
-
+            getHistory();
+            
         }
     });
-    //alert("begin history");
+    
+    loadCourseTable();
+
+
+};
+
+function getHistory() {
     $.ajax({
         type: 'GET',
         url: "/getHistory",
         anysc: false,
-        data: null,  //转化字符串
+        data: null,
         contentType: 'application/json',
         dataType: 'json',
         success: function (rdata) {
             // window.selectedCourse = rdata['result'];
             alert(JSON.stringify(rdata));
-            insertCard(window.class_data, rdata);
+            var temp = [];
+            for (i in rdata) {
+                console.log(window.class_data[i]);
+                for(j in window.class_data){
+                    if(window.class_data[j].courseID == i){
+                        temp.push(window.class_data[j]);
+                    }
+                // alert(window.class_data[i]);
+                }
+            }
+            insertCard(temp, rdata);
         }
     });
-    loadCourseTable();
-
-
-};
+}
 
 function loadCourseTable() {
     updateRcoin();
