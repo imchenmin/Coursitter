@@ -85,7 +85,9 @@ def checkClassDeal(request):
 @login_required(login_url='/login')
 # url: /getHistory
 def getHistory(request):
+    print("searching history")
     sid = request.user.sid
+    print(sid)
     result = get_student_all(sid)
     print(result)
     return HttpResponse(json.dumps(result), content_type='application/json')
@@ -236,17 +238,18 @@ def parseCourse(queryset):
             classinfo = ""
             timeobjs = ClassTime.objects.filter(classId=j)
             for k in timeobjs:
-                classinfo = classinfo + "周{} {}-{}".format(k.inweek, k.beganInterval.id, k.endInterval.id)
+                classinfo = classinfo + "周{} {}-{},".format(k.inweek, k.beganInterval.id, k.endInterval.id)
                 period.append(k.inweek)
                 period.append(int(k.beganInterval.id / 2 + 1))
             # print(classinfo)
-            classlist.append({'classnum': j.id, 'teachers': j.teacher.name, 'classinfo': classinfo, 'period': period})
+            classlist.append({'classnum': j.id, 'teachers': j.teacher.name, 'classinfo': classinfo, 'period': period,'location':j.location} )
         # print(classlist)
         courselist.append({'courseID': i.course_code, 'courseName': i.course_name, 'note': i.des, 'credit': i.grade,
                            'classes': classlist})
     result['result'] = courselist
-    # print(result)
+    print(result)
     return result
+
 
 
 def add_queue(student_id, c_id, coin):

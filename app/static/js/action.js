@@ -74,6 +74,7 @@ window.onload = function () {
 
         }
     });
+    //alert("begin history");
     $.ajax({
         type: 'GET',
         url: "/getHistory",
@@ -82,6 +83,7 @@ window.onload = function () {
         contentType: 'application/json',
         dataType: 'json',
         success: function (rdata) {
+            //alert(JSON.stringify(rdata));
             insertCard(window.class_data, rdata['result']);
         }
     });
