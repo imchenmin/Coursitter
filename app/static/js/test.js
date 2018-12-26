@@ -151,7 +151,7 @@ function fillTable(obj) {
 			var rown = parseInt(period[i + 1] - 1);
 			var celln = parseInt(period[i]);
 			if (rown >= 2) rown++;
-			else if (rown >= 5) rown++;
+			if (rown >= 5) rown++;
 			ot.rows[rown].cells[celln].innerHTML = "<p>" + name + "</p>" + "<p>" + teachers + "</p>" + classinfo;
 			ot.rows[rown].cells[celln].setAttribute("style",tempcolor);
 			i += 2;
@@ -218,7 +218,7 @@ function clearCourse(ot, aBtns) {
 			var rown = parseInt(tempperiod[i + 1] - 1);
 			var celln = parseInt(tempperiod[i]);
 			if (rown >= 2) rown++;
-			else if (rown >= 5) rown++;
+			if (rown >= 5) rown++;
 			ot.rows[rown].cells[celln].innerHTML = "";
 			ot.rows[rown].cells[celln].setAttribute("style","background-color:none");
 			i += 2;
@@ -236,7 +236,7 @@ function clearThisClass(ot, period) {
 		var rown = parseInt(period[i + 1] - 1);
 		var celln = parseInt(period[i]);
 		if (rown >= 2) rown++;
-		else if (rown >= 5) rown++;
+		if (rown >= 5) rown++;
 		ot.rows[rown].cells[celln].innerHTML = "";
 		ot.rows[rown].cells[celln].setAttribute("style","background-color:none");
 		i += 2;
@@ -245,10 +245,10 @@ function clearThisClass(ot, period) {
 
 function hasConflict(ot, name, period) {
 	for (var i = 0; i < period.length;) {
-		var rown = parseInt(period[i + 1] - 1);
+		var rown = parseInt(period[i + 1]-1);
 		var celln = parseInt(period[i]);
 		if (rown >= 2) rown++;
-		else if (rown >= 5) rown++;
+		if (rown >= 5) rown ++;
 		console.log(rown);
 		console.log(celln);
 		console.log(ot.rows[rown].cells[celln]);
