@@ -227,6 +227,7 @@ def parseCourse(queryset):
         for j in classobjs:
             period = []
             classinfo = ""
+            period = []
             timeobjs = ClassTime.objects.filter(classId=j)
             for k in timeobjs:
                 classinfo = classinfo + "周{} {}-{},".format(k.inweek, k.beganInterval.id, k.endInterval.id)
