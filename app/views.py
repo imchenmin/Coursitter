@@ -475,3 +475,25 @@ def add_instant(s_id, c_id):
     except Exception as e:
         print(e)
         return False
+
+#url:/getterminfo
+def get_term_info(request):
+    sid = request.user.sid
+    cur = timezone.now()
+    sta = None
+    ddlInfo = None
+    ter = Terms.objects.get(id=1)
+    if ter.begin_selected <= sta <= ter.end_selected:
+        sta = '预选课预选阶段'
+        ddlInfo = ter.end_selected
+    elif ter.end_selected < cur <= ter.end_modify:
+        sta = '预选课调整阶段'
+        ddlInfo = ter.end_modify
+    else:
+        sta = '自由退选阶段'
+        ddlInfo = timezone.ter.end_modify + timezone.timedelta(days=10)
+    result = {}
+    result['studentID'] = sid
+    result['state'] = sta
+    result['ddlInfo'] = ddlInfo
+    return HttpResponse(json.dumps(result), content_type='application/json')
