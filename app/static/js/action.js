@@ -159,7 +159,6 @@ $(document).ready(function () {
             courseModal.modal('show');
             $('#myModal h2')[0].innerHTML = row['courseName'] + '(' + row['courseID'] + ')' + '--课程信息';
             var currentCourse;
-            //TODO 课程卡片
             var flag = false;
 
             for (i in window.selectedCourse) {
@@ -190,6 +189,44 @@ $(document).ready(function () {
             }
             $('#myModal h5')[0].innerHTML = currentCourse['note'];
             $('#myModal button')[1].id = i;
+
+            //TODO 课程卡片
+            var classBox = $('#classBox');
+            classBox.empty();
+            var colorSet = ['w3-light-green', 'w3-lime', 'w3-khaki'];
+            var classes = currentCourse['classes'];
+
+            for (var c in classes) {
+                var classCard = document.createElement('div');
+                var classType = 'w3-hover-shadow w3-center ';
+                classType += colorSet[classBox.children.length % 3];
+                classCard.setAttribute('class', classType);
+                var class_id = parseInt(c) + 1;
+                var class_head = class_id + '班  ' + classes[c]['teachers'];
+                // fixme 课程分行显示
+                var class_time = classes[c]['classinfo'];
+                classCard.innerHTML = class_head + class_time;
+                classBox.append(classCard)
+            }
+
+
+            /*
+                    <div class="w3-khaki w3-hover-shadow w3-center center">
+                            <p> 一班:<br/>
+                        周一 1-2节
+                        一教101 王老师<br/>
+                        周二 1-2节
+                        一教101 王老师</p>
+                        </div>
+                        <div class="w3-light-green w3-hover-shadow w3-center">
+                            <p> 一班:<br/>
+                        周一 1-2节
+                        一教101 王老师<br/>
+                        周二 1-2节
+                        一教101 王老师</p>
+                        </div>
+            */
+
 
         },
         columns: [{
