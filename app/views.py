@@ -67,6 +67,7 @@ def searchCourseDeal(request):
     print("searching class")
     result = parseURL_simpleSearch(request.get_full_path())
     result = fuzzy_search(result)
+    print(result)
     result = parseCourse(result)
     # print(result)
     return HttpResponse(json.dumps(result), content_type='application/json')
@@ -197,7 +198,8 @@ def fuzzy_search(con):
     try:
         result = Courses.objects.filter(
             Q(classes__teacher__name__contains=con) | Q(classes__course__course_name__contains=con) | Q(
-                course_code__contains=con))
+                course_code__contains=con)).distinct()
+        print(result)
         return result
     except Exception as e:
         print(e)
@@ -351,7 +353,7 @@ def write_result():
 
 def allCourse(request):
     # queryset = Courses.objects.filter(classes__term__status="prepare")
-    queryset = Courses.objects.filter(classes__in=Classes.objects.all())
+    queryset = Courses.objects.filter(classes__in=Classes.objects.all()).distinct()
     result = parseCourse(queryset)
     print("get all class : ", len(result['result']), " classes total")
     return JsonResponse(result)
@@ -478,22 +480,26 @@ def add_instant(s_id, c_id):
 
 #url:/getterminfo
 def get_term_info(request):
-    sid = request.user.sid
-    cur = timezone.now()
-    sta = None
-    ddlInfo = None
-    ter = Terms.objects.get(id=1)
-    if ter.begin_selected <= sta <= ter.end_selected:
-        sta = '预选课预选阶段'
-        ddlInfo = ter.end_selected
-    elif ter.end_selected < cur <= ter.end_modify:
-        sta = '预选课调整阶段'
-        ddlInfo = ter.end_modify
-    else:
-        sta = '自由退选阶段'
-        ddlInfo = timezone.ter.end_modify + timezone.timedelta(days=10)
-    result = {}
-    result['studentID'] = sid
-    result['state'] = sta
-    result['ddlInfo'] = ddlInfo
-    return HttpResponse(json.dumps(result), content_type='application/json')
+    try:
+        sid = request.user.sid
+        cur = timezone.now()
+        sta = None
+        ddlInfo = None
+        ter = Terms.objects.get(id=1)
+        test = -1
+        if ter.begin_selected <= cur <= ter.end_selected:
+            sta = '预选课预选阶段'
+            ddlInfo = ter.end_selected
+        elif ter.end_selected < cur <= ter.end_modify:
+            sta = '预选课调整阶段'
+            ddlInfo = ter.end_modify
+        else:
+            sta = '自由退选阶段'
+            ddlInfo = timezone.ter.end_modify + timezone.timedelta(days=10)
+        result = {}
+        result['studentID'] = sid
+        result['state'] = sta
+        result['ddlInfo'] = str(ddlInfo)
+        return HttpResponse(json.dumps(result), content_type='application/json')
+    except Exception as e:
+        print(e)

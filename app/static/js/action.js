@@ -28,10 +28,10 @@ window.onload = function () {
         success: function (rdata) {
             // window.selectedCourse = rdata['result'];
             // insertCard(window.class_data, rdata['result']);
-            $('#studentID').html = rdata['studentID'];
-            $('#currentState').html = rdata['state'] + '<br/>' + '结束于：' + rdata['ddlInfo'];
-            alert($('#studentID').html);
-            alert($('#currentState').html);
+            $('#studentID')[0].innerHTML = rdata['studentID'];
+            $('#currentState')[0].innerHTML = rdata['state'] + '<br/>' + '结束于：' + rdata['ddlInfo'];
+            //alert($('#studentID').html);
+            //alert($('#currentState').html);
         }
     });
 
