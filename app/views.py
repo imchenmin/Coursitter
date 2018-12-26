@@ -274,15 +274,15 @@ def parseCourse(queryset):
 
 
 def add_queue(student_id, c_id, coin):
-    ju = StuClasstable.objects.filter(studentobj_id=student_id, classobj_id=c_id)
+    ju = StuClasstable.objects.filter(studentobj_id=student_id, classobj_id=c_id,status__status='waiting')
     if ju:
         judge = None
         for ele in ju:
             judge = ele
-        deta = coin - judge.coin
+        deta = int(coin) - judge.coin
         total = used_coin(student_id) + deta
         if total < 100:
-            judge.coin = coin
+            judge.coin = int(coin)
             judge.save()
             return True
         else:
@@ -313,7 +313,7 @@ def used_coin(student_id):
 
 def dele_class(student_id, class_id):
     try:
-        ele = StuClasstable.objects.get(studentobj_id=student_id, classobj_id=class_id)
+        ele = StuClasstable.objects.get(studentobj_id=student_id, classobj_id=class_id,status__status='waiting')
         ele.status = RelStuCtable.objects.get(status='cancel')
         ele.save()
         if get_status() is None:
@@ -495,7 +495,7 @@ def get_term_info(request):
             ddlInfo = ter.end_modify
         else:
             sta = '自由退选阶段'
-            ddlInfo = timezone.ter.end_modify + timezone.timedelta(days=10)
+            ddlInfo = ter.end_modify + timezone.timedelta(days=10)
         result = {}
         result['studentID'] = sid
         result['state'] = sta
