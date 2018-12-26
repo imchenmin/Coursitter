@@ -67,8 +67,28 @@ window.onload = function () {
                 } else {
                     rdata[i]['note_short'] = rdata[i]['note'];
                 }
+
+                // 任课老师
+                var lecturer = '';
+                if (rdata[i].hasOwnProperty("classes")) {
+                    var allClass=rdata[i]['classes'];
+                    for (var d in allClass) {
+                        if (lecturer === '') {
+                            lecturer = allClass[d]['teachers'];
+
+                        } else {
+                            if (lecturer === allClass[d]['teachers']) {
+                                lecturer += '等';
+                                break;
+                            }
+                        }
+                    }
+                    rdata[i]['lecturer'] = lecturer;
+                }
+
+
             }
-            //TODO 任课老师
+
             window.class_data = rdata;
             $('#class_table').bootstrapTable('prepend', window.class_data);
             // refreshCourseTable(rdata["result"]);
@@ -150,7 +170,7 @@ $(document).ready(function () {
 
             }
             var obj = $('#myModal button')[1];
-            if (! flag) {
+            if (!flag) {
                 obj.innerHTML = "选择课程";
                 obj.value = "unselected";
                 obj.setAttribute("class", 'w3-btn c5');
@@ -500,7 +520,6 @@ function selectCourse(obj) {
                     obj.value = "selected";
                     obj.setAttribute("class", 'w3-btn w3-red');
                     window.selectedCourse.push({'courseID': courseID});
-                    //fixme
                     insertCard([course]);
 
 
