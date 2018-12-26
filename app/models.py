@@ -145,7 +145,7 @@ class StuClasstable(models.Model):
     status = models.ForeignKey(RelStuCtable,on_delete=models.CASCADE)
 
     def __str__(self):
-        return "{}{}. class {}".format(self.studentobj.name,self.studentobj.sid,self.classobj.course.course_code, self.classobj.course.course_code)
+        return "{}{}. class {}".format(self.studentobj.sid,self.studentobj.sid,self.classobj.course.course_code, self.classobj.course.course_code)
 
 
 class RelCourse(models.Model):

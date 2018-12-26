@@ -1,3 +1,5 @@
+import hashlib
+
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.shortcuts import render
@@ -16,6 +18,8 @@ def login_view(request):
     else:
         username = request.POST['username']
         password = request.POST['password']
+        #password = hashlib.sha1(password.cleaned_data['password']).hexdigest()
+        #print("ahsdhfalkhflkhijebfkjsdvvkjabjihg")
         # authenticate()
         user = authenticate(request, sid=int(username), password=password)
         print(user, "login")
@@ -86,6 +90,7 @@ def getHistory(request):
     sid = request.user.sid
     result = get_student_all(sid)
     print("searching history of ", sid, " result has ", len(result), "classes")
+    print(result)
     return HttpResponse(json.dumps(result), content_type='application/json')
 
 @login_required(login_url='/login')
@@ -212,19 +217,6 @@ def check(data):
     except Exception as e:
         return 0, e
 
-
-# def add_queue(student_id, c_id, coin):
-#     judge = StuClasstable.objects.get(studentobj_id=student_id,classobj_id=c_id)
-#     if judge:
-#         judge.coin=coin
-#         judge.save()
-#         return True
-#     else:
-#         try:
-#             sta = RelStuCtable.objects.get(status='waiting')
-#             # na = StuClasstable(s
-#         return False
-
 def parseCourse(queryset):
     result = {}
     result['msg'] = ""
@@ -232,8 +224,8 @@ def parseCourse(queryset):
     for i in queryset:
         classobjs = Classes.objects.filter(course=i)
         classlist = []
-        period = []
         for j in classobjs:
+            period = []
             classinfo = ""
             timeobjs = ClassTime.objects.filter(classId=j)
             for k in timeobjs:
@@ -343,24 +335,19 @@ def get_student_all(student_id):
 
 
 def parse_selected_course(query_set):
+    # coin=1 , classid=5
     cour = []
     # {courseid: {coin: 123, classnum: 100}, ...}
-    for ele in query_set:
-        s = str(Classes.objects.get(id=ele[0]).course.course_code) + ' :{coin: ' + str(ele[1]) + ', classsnum:' + str(
-            ele[0]) + '}'
-        cour.append(s)
-    result = ''
-    if len(cour) == 1:
-        result = '{' + s[0] + '}'
-    else:
-        for i in range(len(cour)):
-            if i == 0:
-                result += '{' + cour[i] + ','
-            elif i == len(cour) - 1:
-                result += cour[i] + '}'
-            else:
-                result += cour[i] + ','
-    return result
+    result = {}
+    try:
+        for ele in query_set:
+            c_code = Classes.objects.get(id=ele[0]).course.course_code
+            coin = ele[1]
+            c_id = ele[0]
+            result[c_code]={'coin':coin,'classnum':c_id}
+        return result
+    except Exception as e:
+        print(e)
 
 def parseURL(url):
     url = urllib.parse.unquote(url)
