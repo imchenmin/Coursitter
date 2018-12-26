@@ -143,9 +143,24 @@
     <div>
 
         <div class="row">
-            <div class="w3-card" style="height: 23px; display: inline-block;width: 342px;margin-left: 78%;">
-                你好，11611815 现在状态：绝赞选课中...
-                <div style="position:absolute;right:0px;top:0px;z-index:999;" class="logout" onclick="logout()"></div>
+            <div class="w3-navbar w3-card-8 w3-light-grey" >
+                <li class="w3-right"><a><i class="w3-right logout" onclick="logout()"></i></a></li>
+                <li class="w3-dropdown-hover w3-right"><a href="#"><i class="w3-right person" ></i></a>
+                    <div class="w3-dropdown-content w3-white w3-card-4">
+                        <a id="studentID" href="#">11611815</a>
+
+                    </div>
+                </li>
+                <li class="w3-dropdown-hover w3-right"><a href="#"><i class="w3-right menu" ></i></a>
+                    <div class="w3-dropdown-content w3-white w3-card-4">
+                        <a id="currentState" href="#">绝赞选课中</a>
+
+                    </div>
+                </li>
+
+                <!--<div class="w3-right logout" onclick="logout()"></div>-->
+                <!--<div class="w3-right person" onclick="logout()"></div>-->
+                <!--<div class="w3-right menu" onclick="logout()"></div>-->
             </div>
             <div class="col-md-12 search-area col-md-offset-1">
 
