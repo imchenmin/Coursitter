@@ -27,5 +27,6 @@ urlpatterns = [
     path('classADD/', views.addClassDeal),
     path('classDELETE/', views.deleteClassDeal),
     path('checkClass/', views.checkClassDeal),
-    path('getHistory/', views.getHistory)
+    path('getHistory/', views.getHistory),
 ]
+import app.write_result

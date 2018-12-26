@@ -1,5 +1,3 @@
-import hashlib
-
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.shortcuts import render
@@ -8,7 +6,24 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 import json
 import urllib.parse
 # Create your views here.
-from app.models import RelCourse, Courses, StuClasstable, Classes, ClassTime, Students, RelStuCtable
+from django.utils import timezone
+
+from app.models import RelCourse, Courses, StuClasstable, Classes, ClassTime, Students, RelStuCtable, Terms
+
+import time
+
+
+# design for simpleSearch
+# input: str/fullURL
+# output: str
+def parseURL_simpleSearch(url):
+    url = urllib.parse.unquote(url)
+    for i in range(len(url)):
+        if url[i] == "?":
+            url = url[i + 1:]
+            break
+    result = url
+    return result
 
 
 def login_view(request):
@@ -18,8 +33,6 @@ def login_view(request):
     else:
         username = request.POST['username']
         password = request.POST['password']
-        #password = hashlib.sha1(password.cleaned_data['password']).hexdigest()
-        #print("ahsdhfalkhflkhijebfkjsdvvkjabjihg")
         # authenticate()
         user = authenticate(request, sid=int(username), password=password)
         print(user, "login")
@@ -50,6 +63,7 @@ def userMain(request):
 
 def searchCourseDeal(request):
     # print(request.get_full_path())
+    result = parse_selected_course([(5, 1)])
     print("searching class")
     result = parseURL_simpleSearch(request.get_full_path())
     result = fuzzy_search(result)
@@ -66,7 +80,7 @@ def seachLableDeal(request):
     result = label_search(result)
     # print(result)
     result = parseCourse(result)
-    print("searching class by lable, totaly ",len(result['result']),"coureses")
+    print("searching class by lable, totaly ", len(result['result']), "coureses")
     # todo transfer
     return HttpResponse(json.dumps(result), content_type='application/json')
 
@@ -83,14 +97,15 @@ def checkClassDeal(request):
     print("checking", result)
     return HttpResponse(json.dumps(result), content_type='application/json')
 
+
 @login_required(login_url='/login')
 # url: /getHistory
 def getHistory(request):
-
     sid = request.user.sid
     result = get_student_all(sid)
     print("searching history of ", sid, " result has ", len(result), "classes")
     return HttpResponse(json.dumps(result), content_type='application/json')
+
 
 @login_required(login_url='/login')
 # url: /classADD
@@ -216,6 +231,20 @@ def check(data):
     except Exception as e:
         return 0, e
 
+
+# def add_queue(student_id, c_id, coin):
+#     judge = StuClasstable.objects.get(studentobj_id=student_id,classobj_id=c_id)
+#     if judge:
+#         judge.coin=coin
+#         judge.save()
+#         return True
+#     else:
+#         try:
+#             sta = RelStuCtable.objects.get(status='waiting')
+#             # na = StuClasstable(s
+#         return False
+
+# 把period放在循环内
 def parseCourse(queryset):
     result = {}
     result['msg'] = ""
@@ -223,17 +252,18 @@ def parseCourse(queryset):
     for i in queryset:
         classobjs = Classes.objects.filter(course=i)
         classlist = []
+
         for j in classobjs:
             period = []
             classinfo = ""
-            period = []
             timeobjs = ClassTime.objects.filter(classId=j)
             for k in timeobjs:
                 classinfo = classinfo + "周{} {}-{},".format(k.inweek, k.beganInterval.id, k.endInterval.id)
                 period.append(k.inweek)
                 period.append(int(k.beganInterval.id / 2 + 1))
             # print(classinfo)
-            classlist.append({'classnum': j.id, 'teachers': j.teacher.name, 'classinfo': classinfo, 'period': period,'location':j.location} )
+            classlist.append({'classnum': j.id, 'teachers': j.teacher.name, 'classinfo': classinfo, 'period': period,
+                              'location': j.location})
         # print(classlist)
         courselist.append({'courseID': i.course_code, 'courseName': i.course_name, 'note': i.des, 'credit': i.grade,
                            'classes': classlist})
@@ -241,19 +271,18 @@ def parseCourse(queryset):
     return result
 
 
-
 def add_queue(student_id, c_id, coin):
-
     ju = StuClasstable.objects.filter(studentobj_id=student_id, classobj_id=c_id)
     if ju:
         judge = None
         for ele in ju:
             judge = ele
-        deta = coin - judge.coin
+        deta = int(coin) - judge.coin
         total = used_coin(student_id) + deta
         if total < 100:
             judge.coin = coin
             judge.save()
+            print('add queue true')
             return True
         else:
             return False
@@ -262,6 +291,7 @@ def add_queue(student_id, c_id, coin):
             sta = RelStuCtable.objects.get(status='waiting')
             # na = StuClasstable(studentobj=student, classobj_id=classobj, coin=coin, status=sta)
             StuClasstable.objects.create(studentobj_id=student_id, classobj_id=c_id, coin=coin, status_id=sta.id)
+            print('add queue true')
             # na.save()
             # StuClasstable.objects.create()
             return True
@@ -286,6 +316,13 @@ def dele_class(student_id, class_id):
         ele = StuClasstable.objects.get(studentobj_id=student_id, classobj_id=class_id)
         ele.status = RelStuCtable.objects.get(status='cancel')
         ele.save()
+        if get_status() is None:
+            ele1 = StuClasstable.objects.order_by('coin').get(student_id=student_id, classobj_id=class_id)
+            if ele1 is None:
+                return 0
+            ele2 = ele1[0]
+            ele2.status = RelStuCtable.objects.get(status='cancel')
+            ele2.save()
         return 1
     except Exception as e:
         print(e)
@@ -324,10 +361,13 @@ def allCourse(request):
 
 def get_student_all(student_id):
     try:
-        qs = StuClasstable.objects.filter(studentobj_id=student_id,status__status='waiting') | StuClasstable.objects.filter(studentobj_id=student_id, status__status='selected')
+        qs = StuClasstable.objects.filter(studentobj_id=student_id,
+                                          status__status='waiting') | StuClasstable.objects.filter(
+            studentobj_id=student_id, status__status='selected')
         result = []
         for ele in qs:
-            result.append((ele.classobj_id, ele.coin))
+            sta = ele.status.status
+            result.append((ele.classobj_id, ele.coin, sta))
         return parse_selected_course(result)
     except Exception as e:
         print(e)
@@ -338,16 +378,20 @@ def parse_selected_course(query_set):
     # coin=1 , classid=5
     cour = []
     # {courseid: {coin: 123, classnum: 100}, ...}
-    result = {}
+    result = []
     try:
         for ele in query_set:
             c_code = Classes.objects.get(id=ele[0]).course.course_code
             coin = ele[1]
             c_id = ele[0]
-            result[c_code]={'coin':coin,'classnum':c_id}
+            status = get_status()
+            if status == None:
+                status = ele[2]
+            result.append({c_code: {'coin': coin, 'classnum': c_id, 'status': status}})
         return result
     except Exception as e:
         print(e)
+
 
 def parseURL(url):
     url = urllib.parse.unquote(url)
@@ -400,3 +444,17 @@ def parseURL_simpleSearch(url):
             break
     result = url
     return result
+
+
+def close_selection(term_id):
+    te = Terms.objects.get(id=term_id)
+    te.status = 'close'
+
+
+def get_status():
+    cur = timezone.now()
+    c_term = Terms.objects.get(id=1)
+    if cur >= c_term.begin_selected and cur <= c_term.end_selected:
+        return 'free'
+    else:
+        return None

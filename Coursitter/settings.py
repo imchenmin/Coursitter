@@ -41,8 +41,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'app.apps.AppConfig',
+    'django_apscheduler',
 ]
-
+APSCHEDULER_DATETIME_FORMAT =  "N j, Y, f:s a"  # Default
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
