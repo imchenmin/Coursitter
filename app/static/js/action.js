@@ -38,6 +38,8 @@ window.labels = {
     "interval": "1-2节 3-4节 5-6节 7-8节 9-10节 11节"
 };
 
+window.selectedCourse = [];
+
 window.onload = function () {
     document.getElementById("commit_Edit").style.display = "none";
     document.getElementById("all_label").style.display = "none";
@@ -45,7 +47,6 @@ window.onload = function () {
     for (var label in labels_obj) {
         document.getElementById("all_label").appendChild(labels_obj[label]);
     }
-
     $.ajax({
         type: 'GET',
         url: "/allCourse",
@@ -66,6 +67,26 @@ window.onload = function () {
                 } else {
                     rdata[i]['note_short'] = rdata[i]['note'];
                 }
+
+                // 任课老师
+                var lecturer = '';
+                if (rdata[i].hasOwnProperty("classes")) {
+                    var allClass = rdata[i]['classes'];
+                    for (var d in allClass) {
+                        if (lecturer === '') {
+                            lecturer = allClass[d]['teachers'];
+
+                        } else {
+                            if (lecturer === allClass[d]['teachers']) {
+                                lecturer += '等';
+                                break;
+                            }
+                        }
+                    }
+                    rdata[i]['lecturer'] = lecturer;
+                }
+
+
             }
 
             window.class_data = rdata;
@@ -83,7 +104,7 @@ window.onload = function () {
         contentType: 'application/json',
         dataType: 'json',
         success: function (rdata) {
-            //alert(JSON.stringify(rdata));
+            // window.selectedCourse = rdata['result'];
             insertCard(window.class_data, rdata['result']);
         }
     });
@@ -139,6 +160,26 @@ $(document).ready(function () {
             courseModal.modal('show');
             $('#myModal h2')[0].innerHTML = row['courseName'] + '(' + row['courseID'] + ')' + '--课程信息';
             var currentCourse;
+            var flag = false;
+
+            for (i in window.selectedCourse) {
+                if (window.selectedCourse[i]['courseID'] === row['courseID']) {
+                    flag = true;
+                    break;
+                }
+
+            }
+            var obj = $('#myModal button')[1];
+            if (!flag) {
+                obj.innerHTML = "选择课程";
+                obj.value = "unselected";
+                obj.setAttribute("class", 'w3-btn c5');
+            } else {
+                obj.innerHTML = "取消选择";
+                obj.value = "selected";
+                obj.setAttribute("class", 'w3-btn w3-red');
+            }
+
 
             for (var i in window.class_data) {
                 if (window.class_data[i]["courseID"] === row['courseID']) {
@@ -150,6 +191,44 @@ $(document).ready(function () {
             $('#myModal h5')[0].innerHTML = currentCourse['note'];
             $('#myModal button')[1].id = i;
 
+            //TODO 课程卡片
+            var classBox = $('#classBox');
+            classBox.empty();
+            var colorSet = ['w3-light-green', 'w3-lime', 'w3-khaki'];
+            var classes = currentCourse['classes'];
+
+            for (var c in classes) {
+                var classCard = document.createElement('div');
+                var classType = 'w3-hover-shadow w3-center ';
+                classType += colorSet[classBox.children.length % 3];
+                classCard.setAttribute('class', classType);
+                var class_id = parseInt(c) + 1;
+                var class_head = class_id + '班  ' + classes[c]['teachers'];
+                // fixme 课程分行显示
+                var class_time = classes[c]['classinfo'];
+                classCard.innerHTML = class_head + class_time;
+                classBox.append(classCard)
+            }
+
+
+            /*
+                    <div class="w3-khaki w3-hover-shadow w3-center center">
+                            <p> 一班:<br/>
+                        周一 1-2节
+                        一教101 王老师<br/>
+                        周二 1-2节
+                        一教101 王老师</p>
+                        </div>
+                        <div class="w3-light-green w3-hover-shadow w3-center">
+                            <p> 一班:<br/>
+                        周一 1-2节
+                        一教101 王老师<br/>
+                        周二 1-2节
+                        一教101 王老师</p>
+                        </div>
+            */
+
+
         },
         columns: [{
             field: 'courseID',
@@ -158,7 +237,7 @@ $(document).ready(function () {
         }, {
             field: 'courseName',
             title: '课程名称',
-            class: "col-md-2"
+            class: "col-md-3"
         }, {
             field: 'credit',
             title: '学分',
@@ -170,7 +249,7 @@ $(document).ready(function () {
         }, {
             field: 'note_short',
             title: '课程简介',
-            class: "col-md-7"
+            class: "col-md-6"
         },
         ],
 
@@ -194,21 +273,30 @@ function refreshCourseTable(rdata) {
 
 function search_class() {
     var data = $('#searchContent').val(); //string
-    $.ajax({
-        type: 'GET',
-        url: "/searchCourse",
-        anysc: false,
-        data: data,  //转化字符串
-        contentType: 'application/json',
-        dataType: 'json',
-        success: function (rdata) { //成功的话，得到消息
-            //rdata's type is json
-            //returnClass(data);
-            //alert(JSON.stringify(rdata));
-            refreshCourseTable(rdata["result"]);
 
-        }
-    });
+    if (data) {
+        $.ajax({
+            type: 'GET',
+            url: "/searchCourse",
+            anysc: false,
+            data: data,  //转化字符串
+            contentType: 'application/json',
+            dataType: 'json',
+            success: function (rdata) { //成功的话，得到消息
+                //rdata's type is json
+                //returnClass(data);
+                //alert(JSON.stringify(rdata));
+                refreshCourseTable(rdata["result"]);
+
+            }
+        });
+    } else {
+        $('#class_table').bootstrapTable('removeAll');
+        $('#class_table').bootstrapTable('prepend', window.class_data);
+
+    }
+
+
     // var rdata = [{
     //     "courseName": "面向对象",
     //     "courseID": "CS303",
@@ -246,7 +334,7 @@ function showFullLabel() {
 
 }
 
-function searchByLebel() {
+function searchByLabel() {
     var datal = {"Grade": [], "Departments": [], "CourseType": [], "interval": [], "day": []}; //dictionary
 
     $("#selected_label button").each(function () {
@@ -265,26 +353,36 @@ function searchByLebel() {
 
 
     });
-
+    var count = 0;
     for (var key in datal) {
         if (datal[key].length === 0) {
             delete datal[key];
+        } else {
+            count++;
         }
     }
 
-    $.ajax({
-        type: 'GET',
-        url: "/searchLabel",
-        anysc: false,
-        data: datal,  //转化字符串
-        contentType: 'application/json',
-        dataType: 'json',
-        success: function (rdata) { //成功的话，得到消息
-            //rdata's type is json
-            //returnClass(data);
-            refreshCourseTable(rdata['result']);
-        }
-    });
+    if (count > 0) {
+        $.ajax({
+            type: 'GET',
+            url: "/searchLabel",
+            anysc: false,
+            data: datal,  //转化字符串
+            contentType: 'application/json',
+            dataType: 'json',
+            success: function (rdata) { //成功的话，得到消息
+                //rdata's type is json
+                //returnClass(data);
+                refreshCourseTable(rdata['result']);
+            }
+        });
+    } else {
+        $('#class_table').bootstrapTable('removeAll');
+        $('#class_table').bootstrapTable('prepend', window.class_data);
+
+    }
+
+
     // var rdata = [{
     //     "courseName": "人工智能",
     //     "courseID": "CS303",
@@ -325,7 +423,7 @@ function showSelectedLabel() {
     document.getElementById("all_label").style.display = "none";
     document.getElementById("selected_label").classList.replace("col-md-2", "col-md-12");
 
-    searchByLebel();
+    searchByLabel();
 }
 
 function generate_labels() {
@@ -378,19 +476,24 @@ function copy(obj) {
 }
 
 function select_label(obj) {
+    // 标签数量最大值
     if (obj.title === "unselected") {
-        // obj.classList.replace("btn-info", "btn-success");
-        obj.setAttribute("class", "w3-btn w3-indigo w3-border col-md-3 ");
+        if (document.getElementById('selected_label').children.length <= 16) {
+            // obj.classList.replace("btn-info", "btn-success");
+            obj.setAttribute("class", "w3-btn w3-indigo w3-border col-md-3 ");
 
-        obj.setAttribute("title", "selected");
-        var show_it = obj.cloneNode(true);
-        show_it.innerHTML = obj.innerHTML;
-        show_it.setAttribute("id", "show_" + obj.id);
-        show_it.setAttribute("title", obj.id + "show_only");
-        // show_it.classList.replace("col-md-3", "col-md-12");
+            obj.setAttribute("title", "selected");
+            var show_it = obj.cloneNode(true);
+            show_it.innerHTML = obj.innerHTML;
+            show_it.setAttribute("id", "show_" + obj.id);
+            show_it.setAttribute("title", obj.id + "show_only");
+            // show_it.classList.replace("col-md-3", "col-md-12");
 
-        show_it.setAttribute("class", "w3-btn w3-indigo w3-border col-md-12 ");
-        document.getElementById("selected_label").appendChild(show_it);
+            show_it.setAttribute("class", "w3-btn w3-indigo w3-border col-md-12 ");
+            document.getElementById("selected_label").appendChild(show_it);
+        } else {
+            alert('标签数量最大为15！');
+        }
 
     } else if (obj.title === "selected") {
 
@@ -400,14 +503,17 @@ function select_label(obj) {
         obj.setAttribute("title", "unselected");
         var shown = document.getElementById("show_" + obj.id);
         document.getElementById("selected_label").removeChild(shown);
+
     } else {
         var cname = obj.id;
         var true_name = cname.substring(5);
         obj.parentElement.removeChild(obj);
         obj = document.getElementById(true_name);
-        obj.classList.replace("btn-success", "btn-info");
+        // obj.classList.replace("btn-success", "btn-info");
         obj.setAttribute("class", "w3-btn w3-white w3-border w3-border col-md-3");
         obj.setAttribute("title", "unselected");
+        searchByLabel();
+
     }
 }
 
@@ -423,26 +529,48 @@ function selectCourse(obj) {
     var course = window.class_data[parseInt(obj.id)];
     var courseID = course["courseID"];
     var verified;
-    var msgg;
-    $.ajax({
-        type: 'GET',
-        url: "/checkClass",
-        anysc: false,
-        data: courseID,  //转化字符串
-        contentType: 'application/json',
-        dataType: 'json',
-        success: function (rdata) { //成功的话，得到消息
-            //rdata's type is json
-            //returnClass(data);
-            verified = rdata[0] === 1;
-            msgg = rdata[1];
-            if (verified) {
-                insertCard([course], []);
-            } else {
-                alert(msgg)
+    var msg;
+    if (obj.value === 'selected') {
+        obj.innerHTML = "选择课程";
+        obj.value = "unselected";
+        obj.setAttribute("class", 'w3-btn c5');
+        for (var i in window.selectedCourse) {
+            if (window.selectedCourse[i]['courseID'] === courseID) {
+                window.selectedCourse.splice(i, 1);
+                break;
             }
         }
-    });
+
+        //TODO 课程表删除已选课程的方法
+        deleteById(courseID);
+    } else {
+        $.ajax({
+            type: 'GET',
+            url: "/checkClass",
+            anysc: false,
+            data: courseID,  //转化字符串
+            contentType: 'application/json',
+            dataType: 'json',
+            success: function (rdata) { //成功的话，得到消息
+                //rdata's type is json
+                //returnClass(data);
+                verified = rdata[0] === 1;
+                msg = rdata[1];
+
+
+                if (verified) {
+                    obj.innerHTML = "取消选择";
+                    obj.value = "selected";
+                    obj.setAttribute("class", 'w3-btn w3-red');
+                    window.selectedCourse.push({'courseID': courseID});
+                    insertCard([course]);
+
+
+                } else {
+                    alert(msg)
+                }
+            }
+        });
+    }
 
 }
-

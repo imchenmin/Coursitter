@@ -95,6 +95,7 @@ def getHistory(request):
 @login_required(login_url='/login')
 # url: /classADD
 def addClassDeal(request):
+    print("asdfadiuuhaudgja")
     sid = request.user.sid
     tmp = json.loads(request.body.decode())
     if add_queue(sid, tmp['classnum'], tmp['coin']):
@@ -253,6 +254,7 @@ def parseCourse(queryset):
 
 
 def add_queue(student_id, c_id, coin):
+
     ju = StuClasstable.objects.filter(studentobj_id=student_id, classobj_id=c_id)
     if ju:
         judge = None
@@ -333,9 +335,7 @@ def allCourse(request):
 
 def get_student_all(student_id):
     try:
-        qs = StuClasstable.objects.filter(studentobj_id=student_id,
-                                          status__status='waiting') | StuClasstable.objects.filter(
-            studentobj_id=student_id, status__status='selected')
+        qs = StuClasstable.objects.filter(studentobj_id=student_id,status__status='waiting') | StuClasstable.objects.filter(studentobj_id=student_id, status__status='selected')
         result = []
         for ele in qs:
             result.append((ele.classobj_id, ele.coin))

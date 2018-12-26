@@ -6,7 +6,7 @@ window.rcoin = 10000;
 // 		"classnum": 2
 // 	}
 // }
-// 
+//
 
 function getCookie(name) {
                 var cookieValue = null;
@@ -37,7 +37,7 @@ function getCookie(name) {
                 }
             });
 
-function insertCard(course, history) {
+function insertCard(course, history={}) {
   var oUl_course = document.getElementById('courseList');
   // var testCourse = getInfo();
   for (var i = 0; i < course.length; i++) {
@@ -45,7 +45,7 @@ function insertCard(course, history) {
     oLi.innerHTML = addCourse(course[i]);
     oUl_course.appendChild(oLi);
   }
-  if (history){
+  if (JSON.stringify(history) !== "{}"){
     simulationClick(history);
     //course的结构是{courseid:{coin:123, classnum: 100}, ...}
   }
@@ -68,7 +68,7 @@ function addCourse(testCourse) {
 	}
 	res +=
 		"</ul></div></div><div class=\"card-footer\"><p class=\"replacer\"></p><input type=\"text\" class=\"mytxt\" id=\"coin\" placeholder=\"请输入选课币\"></div></div></div>";
-	
+
 		return res;
 }
 
@@ -86,13 +86,13 @@ function addClass(oCourse) {
 
 	return res;
 }
-	
+
 function fillTable(obj) {
 	oDiv = obj.parentElement;
 	oUl = oDiv.parentElement.parentElement;
 	aBtns = oUl.getElementsByClassName('btn mybtn-select-active');
 	period = oDiv.dataset.period.split(',');
-	name = oDiv.dataset.coursename;
+	var name = oDiv.dataset.coursename;
 	id = oDiv.dataset.courseid;
 	info = oDiv.dataset.classinfo.split(',');
 	teachers = oDiv.dataset.teachers;
@@ -176,6 +176,15 @@ function fillTable(obj) {
 	updateRcoin();
 }
 
+function deleteById(courseid){
+    aCards = document.getElementsByClassName('card-header');
+    for (var i = 0; i < aCards.length; i++) {
+        if(courseid == aCards[i].innerHTML.split(' ')[0]){
+            removeLi(aCards[i]);
+        }
+    }
+}
+
 function removeLi(obj) {
 	oDiv = obj.parentElement.parentElement;
 	oLi = oDiv.parentElement;
@@ -240,6 +249,9 @@ function hasConflict(ot, name, period) {
 		var celln = parseInt(period[i]);
 		if (rown >= 2) rown++;
 		else if (rown >= 5) rown++;
+		console.log(rown);
+		console.log(celln);
+		console.log(ot.rows[rown].cells[celln]);
 		if (ot.rows[rown].cells[celln].innerHTML != "" ) {
 			temp = ot.rows[rown].cells[celln].firstElementChild.innerHTML;
 			if(name != temp){
