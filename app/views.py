@@ -16,10 +16,9 @@ def login_view(request):
     else:
         username = request.POST['username']
         password = request.POST['password']
-        print('logininginging')
         # authenticate()
         user = authenticate(request, sid=int(username), password=password)
-        print(user)
+        print(user, "login")
         if user is not None:
             login(request, user)
             # Redirect to a success page.
@@ -29,7 +28,7 @@ def login_view(request):
         else:
             # Return an 'invalid login' error message.
             # ...
-            print('abbbbb')
+            print('invalid login')
             return HttpResponseRedirect('/')
 
 
@@ -47,6 +46,7 @@ def userMain(request):
 
 def searchCourseDeal(request):
     # print(request.get_full_path())
+    print("searching class")
     result = parseURL_simpleSearch(request.get_full_path())
     result = fuzzy_search(result)
     result = parseCourse(result)
@@ -58,13 +58,11 @@ def searchCourseDeal(request):
 # @login_required(login_url='/login')
 # url: /searchLable
 def seachLableDeal(request):
-    # print(request.get_full_path())
     result = parseURL_label(request.get_full_path())
-    print(result)
     result = label_search(result)
     # print(result)
     result = parseCourse(result)
-    print(result)
+    print("searching class by lable, totaly ",len(result['result']),"coureses")
     # todo transfer
     return HttpResponse(json.dumps(result), content_type='application/json')
 
@@ -74,30 +72,29 @@ def seachLableDeal(request):
 def checkClassDeal(request):
     sid = request.user.sid
     classid = parseURL_simpleSearch(request.get_full_path())
-    print(classid)
     data = [sid, classid]
     bool, strr = check(data)
     result = [bool, strr]
     # todo transfer
-    print(result)
+    print("checking", result)
     return HttpResponse(json.dumps(result), content_type='application/json')
 
 @login_required(login_url='/login')
 # url: /getHistory
 def getHistory(request):
-    print("searching history")
+
     sid = request.user.sid
-    print(sid)
     result = get_student_all(sid)
-    print(result)
+    print("searching history of ", sid, " result has ", len(result), "classes")
     return HttpResponse(json.dumps(result), content_type='application/json')
 
 @login_required(login_url='/login')
 # url: /classADD
 def addClassDeal(request):
-    print("asdfadiuuhaudgja")
     sid = request.user.sid
+    print(request.body.decode())
     tmp = json.loads(request.body.decode())
+    print("addclass ", tmp, " to ", sid)
     if add_queue(sid, tmp['classnum'], tmp['coin']):
         return HttpResponse(json.dumps('1'), content_type='application/json')
     else:
@@ -110,6 +107,7 @@ def deleteClassDeal(request):
     sid = request.user.sid
     tmp = json.loads(request.body.decode())
     result = dele_class(sid, tmp['classnum'])
+    print("deleted class ", tmp['classnum'], " of ", sid, " state ", result)
     return HttpResponse(json.dumps(result), content_type='application/json')
 
 
@@ -248,7 +246,6 @@ def parseCourse(queryset):
         courselist.append({'courseID': i.course_code, 'courseName': i.course_name, 'note': i.des, 'credit': i.grade,
                            'classes': classlist})
     result['result'] = courselist
-    print(result)
     return result
 
 
@@ -329,7 +326,7 @@ def allCourse(request):
     # queryset = Courses.objects.filter(classes__term__status="prepare")
     queryset = Courses.objects.all()
     result = parseCourse(queryset)
-    # print(result)
+    print("get all class : ", len(result['result']), " classes total")
     return JsonResponse(result)
 
 

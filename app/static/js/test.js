@@ -7,36 +7,6 @@ window.rcoin = 10000;
 // 	}
 // }
 //
-
-function getCookie(name) {
-                var cookieValue = null;
-                if (document.cookie && document.cookie !== '') {
-                    var cookies = document.cookie.split(';');
-                    for (var i = 0; i < cookies.length; i++) {
-                        var cookie = jQuery.trim(cookies[i]);
-                        // Does this cookie string begin with the name we want?
-                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                            break;
-                        }
-                    }
-                }
-                return cookieValue;
-            }
-            var csrftoken = getCookie('csrftoken');
-
-            function csrfSafeMethod(method) {
-                // 这些HTTP方法不要求CSRF包含
-                return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
-            }
-            $.ajaxSetup({
-                beforeSend: function(xhr, settings) {
-                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
-                    }
-                }
-            });
-
 function insertCard(course, history={}) {
   var oUl_course = document.getElementById('courseList');
   // var testCourse = getInfo();
@@ -297,7 +267,7 @@ function simulationClick(course){
 function postData(_type, _data){
 	$.ajax({
 		type: "POST",
-		url: "/class"+_type,
+		url: "/class"+_type+"/",
 		anysc: false,
 		data: JSON.stringify(_data),
 		contentType: 'application/json; charset=UTF-8',
