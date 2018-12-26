@@ -1,4 +1,5 @@
 window.data = {};
+window.status_list = [];
 window.rcoin = 10000;
 // data = {
 // 	CS304:{
@@ -93,7 +94,10 @@ function fillTable(obj) {
 		delete window.data[id];
 		aIn[0].setAttribute('style', 'display:unset');
 		aReplacer[0].setAttribute('style','none');
-	} else {
+	} else if(window.status_list[0] != "free"){
+		alert("自由选课阶段已结束，当前阶段仅接受退课！");
+		return;
+	} else{
 		//判断课程冲突
 		if (hasConflict(ot, name, period)) {
 			return;
@@ -248,9 +252,14 @@ function simulationClick(course){
   oList = document.getElementById('courseList');
   aCards = document.getElementsByClassName('card');
   for (var i = 0; i < aCards.length; i++) {
+	//跟新状态列表
+	tempStatus = course[tempid].status;
+	window.status_list.push(tempStatus);
+
     tempid = aCards[i].firstElementChild.innerHTML.split(' ')[0];
     tempcoin = course[tempid].coin;
-    tempclassnum = course[tempid].classnum;
+	tempclassnum = course[tempid].classnum;
+	
     tempinput = aCards[i].getElementsByClassName('mytxt')[0];
     tempinput.value = tempcoin;
     aClasses = aCards[i].getElementsByClassName('class-selector');
@@ -259,9 +268,17 @@ function simulationClick(course){
         var clickEvent=new MouseEvent('click',{
           altKey:true // 模拟alt键按下
         });
-        aClasses[j].getElementsByClassName('btn mybtn-select')[0].dispatchEvent(clickEvent); // 派发
+        aClasses[j].getElementsByClassName('btn mybtn-select').dispatchEvent(clickEvent); // 派发
       }
-    }
+	}
+	var aCard_footer = getElementsByClassName("card-footer")
+	for(j in window.status_list){
+		if(window.status_list[j] != "free"){
+			aCard_footer[i].innerHTML="<p>当前课程状态：" + window.status_list[j] + "<\p>";
+		}else{
+			break;
+		}
+	}
   }
 }
 function postData(_type, _data){
