@@ -76,7 +76,7 @@ class Courses(models.Model):
     # created_date = models.DateTimeField()
 
     def __str__(self):
-        return self.course_code + '' + str(self.grade)
+        return "{} {} grade:{}".format(self.course_code,self.course_name,self.grade)
 
 
 class ClassStatus(models.Model):
@@ -134,7 +134,7 @@ class RelStuCtable(models.Model):
     des = models.TextField(null=True)
 
     def __str__(self):
-        return self.status+self.des
+        return "{}:{}".format(self.status,self.des)
 
 
 # 总的课程表，包括预选课
@@ -145,7 +145,7 @@ class StuClasstable(models.Model):
     status = models.ForeignKey(RelStuCtable,on_delete=models.CASCADE)
 
     def __str__(self):
-        return "{}{}. class {}".format(self.studentobj.sid,self.studentobj.sid,self.classobj.course.course_code, self.classobj.course.course_code)
+        return "stu:{} course:{}. class:{}".format(self.studentobj.sid,self.classobj.course.course_code, self.classobj.course.id)
 
 
 class RelCourse(models.Model):

@@ -1,5 +1,7 @@
 window.data = {};
+window.status_list = [];
 window.rcoin = 10000;
+window.changeable = true;
 // data = {
 // 	CS304:{
 // 		"coin": 50,
@@ -58,6 +60,7 @@ function addClass(oCourse) {
 }
 
 function fillTable(obj) {
+
 	oDiv = obj.parentElement;
 	oUl = oDiv.parentElement.parentElement;
 	aBtns = oUl.getElementsByClassName('btn mybtn-select-active');
@@ -71,7 +74,7 @@ function fillTable(obj) {
 	ot = document.getElementById("classtable");
 	aIn = oCard.getElementsByClassName('mytxt');
 	aReplacer = oCard.getElementsByClassName('replacer');
-	coin = aIn[0].value;
+	coin = window.changeable ? aIn[0].value : 0;
 	classinfo = '';
 	for (i in info){
 		classinfo += "<p>" + info[i] + "</p>";
@@ -85,15 +88,24 @@ function fillTable(obj) {
 	} 
 
 	if (obj.className === "btn mybtn-select-active") {
+
 		clearThisClass(ot, period);
 		obj.setAttribute("class","btn mybtn-select");
 		window.rcoin += parseInt(window.data[id].coin);
 		postData('DELETE', window.data[id]);
 		console.log('delete'+JSON.stringify(window.data[id]));
 		delete window.data[id];
-		aIn[0].setAttribute('style', 'display:unset');
-		aReplacer[0].setAttribute('style','none');
-	} else {
+		if(window.changeable){
+			aIn[0].setAttribute('style', 'display:unset');
+			aReplacer[0].setAttribute('style','none');
+		}
+
+	}
+	else if((!window.changeable) && window.status_list[0] != "free"){
+		alert("自由选课阶段已结束，当前阶段仅接受退课！");
+		return;
+	}
+	else{
 		//判断课程冲突
 		if (hasConflict(ot, name, period)) {
 			return;
@@ -176,6 +188,7 @@ function removeLi(obj) {
 	startMove(oDiv, 'height', 0);
 	setTimeout("oUl.removeChild(oLi);", 2000);
 	updateRcoin();
+	deleteMainStageCourse(id);
 
 }
 
@@ -236,6 +249,9 @@ function hasConflict(ot, name, period) {
 
 function updateRcoin(){
 	var oDiv = document.getElementById("show-coin");
+	if (window.changeable){
+		oDiv.innerHTML="退课阶段"
+	}
 	oDiv.innerHTML = "余币量：" + window.rcoin;
 }
 
@@ -250,7 +266,11 @@ function simulationClick(course){
   for (var i = 0; i < aCards.length; i++) {
     tempid = aCards[i].firstElementChild.innerHTML.split(' ')[0];
     tempcoin = course[tempid].coin;
-    tempclassnum = course[tempid].classnum;
+	tempclassnum = course[tempid].classnum;
+	//跟新状态列表
+	tempStatus = course[tempid].status;
+	window.status_list.push(tempStatus);
+
     tempinput = aCards[i].getElementsByClassName('mytxt')[0];
     tempinput.value = tempcoin;
     aClasses = aCards[i].getElementsByClassName('class-selector');
@@ -261,8 +281,20 @@ function simulationClick(course){
         });
         aClasses[j].getElementsByClassName('btn mybtn-select')[0].dispatchEvent(clickEvent); // 派发
       }
-    }
+	}
+	var aCard_footer = document.getElementsByClassName("card-footer");
+	for(j in window.status_list){
+		if(window.status_list[j] != "free"){
+			aCard_footer[i].innerHTML="<p>当前课程状态：" + window.status_list[j] + "<\p>";
+		}else{
+			break;
+		}
+	}
   }
+  if(window.status_list[0]!='free'){
+  	window.changeable = false;
+  }
+
 }
 function postData(_type, _data){
 	$.ajax({

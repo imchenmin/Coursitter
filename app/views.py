@@ -214,11 +214,11 @@ def check(data):
         for ele in studied_classes:
             c_id.add(ele.classobj_id)
         n_id = set()
-        needed_course = RelCourse.objects.filter(current__course_code=course_code)
+        needed_course = RelCourse.objects.filter(Q(current__course_code=course_code) & ~Q(prerequisites__course_code='NA'))
         for ele in needed_course:
             n_id.add(ele.prerequisites_id)
         re = n_id - c_id
-        if len(re) == 1 and Courses.objects.get(id=re.pop()).course_name == 'null':
+        if len(re) == 0 :
             return 1, 'Success'
         else:
             s = 'You need to study the following courses: '
@@ -277,12 +277,11 @@ def add_queue(student_id, c_id, coin):
         judge = None
         for ele in ju:
             judge = ele
-        deta = int(coin) - judge.coin
+        deta = coin - judge.coin
         total = used_coin(student_id) + deta
         if total < 100:
             judge.coin = coin
             judge.save()
-            print('add queue true')
             return True
         else:
             return False
@@ -291,7 +290,6 @@ def add_queue(student_id, c_id, coin):
             sta = RelStuCtable.objects.get(status='waiting')
             # na = StuClasstable(studentobj=student, classobj_id=classobj, coin=coin, status=sta)
             StuClasstable.objects.create(studentobj_id=student_id, classobj_id=c_id, coin=coin, status_id=sta.id)
-            print('add queue true')
             # na.save()
             # StuClasstable.objects.create()
             return True
@@ -353,7 +351,7 @@ def write_result():
 
 def allCourse(request):
     # queryset = Courses.objects.filter(classes__term__status="prepare")
-    queryset = Courses.objects.all()
+    queryset = Courses.objects.filter(classes__in=Classes.objects.all())
     result = parseCourse(queryset)
     print("get all class : ", len(result['result']), " classes total")
     return JsonResponse(result)
@@ -378,7 +376,7 @@ def parse_selected_course(query_set):
     # coin=1 , classid=5
     cour = []
     # {courseid: {coin: 123, classnum: 100}, ...}
-    result = []
+    result = {}
     try:
         for ele in query_set:
             c_code = Classes.objects.get(id=ele[0]).course.course_code
@@ -387,7 +385,7 @@ def parse_selected_course(query_set):
             status = get_status()
             if status == None:
                 status = ele[2]
-            result.append({c_code: {'coin': coin, 'classnum': c_id, 'status': status}})
+            result[c_code]= {'coin': coin, 'classnum': c_id,'status': status}
         return result
     except Exception as e:
         print(e)
@@ -458,3 +456,22 @@ def get_status():
         return 'free'
     else:
         return None
+
+def add_instant(s_id, c_id):
+    try:
+        s, m = check((s_id, c_id))
+        if s == 1:
+            cla = Classes.objects.get(id=c_id)
+            cap = cla.capacity
+            sel_num = len(StuClasstable.objects.filter(classobj_id=c_id, status__status='selected'))
+            if sel_num + 1 <= cap:
+                sta = RelStuCtable.objects.get(status='selected')
+                StuClasstable.objects.create(studentobj_id=s_id, classobj_id=c_id, status=sta, coin=0)
+                return True
+            else:
+                return False
+        else:
+            return False
+    except Exception as e:
+        print(e)
+        return False
