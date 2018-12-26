@@ -62,7 +62,7 @@ def seachLableDeal(request):
     result = label_search(result)
     # print(result)
     result = parseCourse(result)
-    print("searching class by lable, totaly ",len(result),"coureses")
+    print("searching class by lable, totaly ",len(result['result']),"coureses")
     # todo transfer
     return HttpResponse(json.dumps(result), content_type='application/json')
 
@@ -92,6 +92,7 @@ def getHistory(request):
 # url: /classADD
 def addClassDeal(request):
     sid = request.user.sid
+    print(request.body.decode())
     tmp = json.loads(request.body.decode())
     print("addclass ", tmp, " to ", sid)
     if add_queue(sid, tmp['classnum'], tmp['coin']):
