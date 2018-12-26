@@ -71,7 +71,7 @@ window.onload = function () {
                 // 任课老师
                 var lecturer = '';
                 if (rdata[i].hasOwnProperty("classes")) {
-                    var allClass=rdata[i]['classes'];
+                    var allClass = rdata[i]['classes'];
                     for (var d in allClass) {
                         if (lecturer === '') {
                             lecturer = allClass[d]['teachers'];
@@ -438,20 +438,24 @@ function copy(obj) {
 }
 
 function select_label(obj) {
-    //TODO 标签数量最大值
+    // 标签数量最大值
     if (obj.title === "unselected") {
-        // obj.classList.replace("btn-info", "btn-success");
-        obj.setAttribute("class", "w3-btn w3-indigo w3-border col-md-3 ");
+        if (document.getElementById('selected_label').children.length <= 16) {
+            // obj.classList.replace("btn-info", "btn-success");
+            obj.setAttribute("class", "w3-btn w3-indigo w3-border col-md-3 ");
 
-        obj.setAttribute("title", "selected");
-        var show_it = obj.cloneNode(true);
-        show_it.innerHTML = obj.innerHTML;
-        show_it.setAttribute("id", "show_" + obj.id);
-        show_it.setAttribute("title", obj.id + "show_only");
-        // show_it.classList.replace("col-md-3", "col-md-12");
+            obj.setAttribute("title", "selected");
+            var show_it = obj.cloneNode(true);
+            show_it.innerHTML = obj.innerHTML;
+            show_it.setAttribute("id", "show_" + obj.id);
+            show_it.setAttribute("title", obj.id + "show_only");
+            // show_it.classList.replace("col-md-3", "col-md-12");
 
-        show_it.setAttribute("class", "w3-btn w3-indigo w3-border col-md-12 ");
-        document.getElementById("selected_label").appendChild(show_it);
+            show_it.setAttribute("class", "w3-btn w3-indigo w3-border col-md-12 ");
+            document.getElementById("selected_label").appendChild(show_it);
+        } else {
+            alert('标签数量最大为15！');
+        }
 
     } else if (obj.title === "selected") {
 
@@ -461,6 +465,7 @@ function select_label(obj) {
         obj.setAttribute("title", "unselected");
         var shown = document.getElementById("show_" + obj.id);
         document.getElementById("selected_label").removeChild(shown);
+
     }
     else {
         var cname = obj.id;
@@ -471,6 +476,7 @@ function select_label(obj) {
         obj.setAttribute("class", "w3-btn w3-white w3-border w3-border col-md-3");
         obj.setAttribute("title", "unselected");
         searchByLabel();
+
     }
 }
 
