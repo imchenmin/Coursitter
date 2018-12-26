@@ -252,14 +252,13 @@ function simulationClick(course){
   oList = document.getElementById('courseList');
   aCards = document.getElementsByClassName('card');
   for (var i = 0; i < aCards.length; i++) {
+    tempid = aCards[i].firstElementChild.innerHTML.split(' ')[0];
+    tempcoin = course[tempid].coin;
+	tempclassnum = course[tempid].classnum;
 	//跟新状态列表
 	tempStatus = course[tempid].status;
 	window.status_list.push(tempStatus);
 
-    tempid = aCards[i].firstElementChild.innerHTML.split(' ')[0];
-    tempcoin = course[tempid].coin;
-	tempclassnum = course[tempid].classnum;
-	
     tempinput = aCards[i].getElementsByClassName('mytxt')[0];
     tempinput.value = tempcoin;
     aClasses = aCards[i].getElementsByClassName('class-selector');
@@ -268,10 +267,10 @@ function simulationClick(course){
         var clickEvent=new MouseEvent('click',{
           altKey:true // 模拟alt键按下
         });
-        aClasses[j].getElementsByClassName('btn mybtn-select').dispatchEvent(clickEvent); // 派发
+        aClasses[j].getElementsByClassName('btn mybtn-select')[0].dispatchEvent(clickEvent); // 派发
       }
 	}
-	var aCard_footer = getElementsByClassName("card-footer")
+	var aCard_footer = document.getElementsByClassName("card-footer");
 	for(j in window.status_list){
 		if(window.status_list[j] != "free"){
 			aCard_footer[i].innerHTML="<p>当前课程状态：" + window.status_list[j] + "<\p>";
