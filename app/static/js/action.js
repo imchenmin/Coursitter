@@ -210,33 +210,18 @@ $(document).ready(function () {
                 var class_head = class_id + '班  ' + classes[c]['teachers'];
                 // fixme 课程分行显示
 
-
-                var class_time = classes[c]['classinfo'].split(',');
+                var classinfo = classes[c]['classinfo'];
+                var class_time = classinfo.substring(0,classinfo.lastIndexOf(',')).split(',');
                 var content = '';
                 for (i in class_time) {
-                    content += class_time[i] + classes[c]['location'] + '<br/>';
+                    content += class_time[i] +' '+ classes[c]['location'] + '<br/>';
                 }
                 classCard.innerHTML = '<br/>' + class_head + '<br/>' + content + '<br/>';
-                classBox.append(classCard)
+                classBox.append(classCard);
+                classBox.append('</br>');
             }
 
 
-            /*
-                    <div class="w3-khaki w3-hover-shadow w3-center center">
-                            <p> 一班:<br/>
-                        周一 1-2节
-                        一教101 王老师<br/>
-                        周二 1-2节
-                        一教101 王老师</p>
-                        </div>
-                        <div class="w3-light-green w3-hover-shadow w3-center">
-                            <p> 一班:<br/>
-                        周一 1-2节
-                        一教101 王老师<br/>
-                        周二 1-2节
-                        一教101 王老师</p>
-                        </div>
-            */
 
 
         },
