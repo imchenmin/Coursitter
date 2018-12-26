@@ -102,7 +102,6 @@ function fillTable(obj) {
 
 	}
 	else if((!window.changeable) && window.status_list[0] != "free"){
-		alert("自由选课阶段已结束，当前阶段仅接受退课！");
 		return;
 	}
 	else{
@@ -291,9 +290,11 @@ function simulationClick(course){
 		}
 	}
   }
-  if(window.status_list[0]!='free'){
-  	window.changeable = false;
+
+  if(window.changeableTemp){
+  	window.changeable = true;
   }
+  else window.changeable = false;
 
 }
 function postData(_type, _data){

@@ -8,6 +8,8 @@ window.labels = {
     "interval": "1-2节 3-4节 5-6节 7-8节 9-10节 11节"
 };
 
+window.changeableTemp = true;
+
 window.selectedCourse = [];
 
 window.onload = function () {
@@ -30,6 +32,12 @@ window.onload = function () {
             // insertCard(window.class_data, rdata['result']);
             $('#studentID')[0].innerHTML = rdata['studentID'];
             $('#currentState')[0].innerHTML = rdata['state'] + '<br/>' + '结束于：' + rdata['ddlInfo'];
+            if (rdata['state']==='预选课调整阶段') {
+                		alert("自由选课阶段已结束，当前阶段仅接受退课！");
+                window.changeableTemp = false;
+            }else {
+                window.changeableTemp = true;
+            }
             //alert($('#studentID').html);
             //alert($('#currentState').html);
         }
