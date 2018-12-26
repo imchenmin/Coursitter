@@ -24,7 +24,7 @@
     <!-- <script type="text/javascript" src="../js/action.js"></script> -->
     <!-- <link rel="stylesheet" type="text/css" href="../css/zldcss.css"/> -->
     <script type="text/javascript" src="/static/js/action.js"></script>
-    <link rel="stylesheet" type="text/css" href="/static/css/zldcss.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/zldcss.css"/>
 
     <!-- <script src="../js/jsMove.js"></script> -->
     <!-- <script src="../js/test.js"></script> -->
@@ -143,12 +143,15 @@
     <div>
 
         <div class="row">
+            <div style="position:absolute;right:0px;top:0px;z-index:999;" class="logout" onclick="logout()">
+            </div>
             <div class="col-md-12 search-area col-md-offset-1">
+
                 <form class="form-inline">
                     <div class="input-wrapper">
                         <input id="searchContent" type="text"
                                class="form-control"
-                               placeholder="">
+                               placeholder="" onkeydown="enterSubmit(event)">
                     </div>
                     <button id="search" type="button" class="btn btn_search c5" onclick="search_class()">搜索</button>
                 </form>
@@ -208,7 +211,8 @@
                 </div>
                 <div class="col-md-4" style="height: 100%">
                     <div style="height: 20%;border: black 1px">
-                        <button type="button" id=-1 value="unselected" class="w3-btn c5" onclick="selectCourse(this)" style="margin: 15% 30%">
+                        <button type="button" id=-1 value="unselected" class="w3-btn c5" onclick="selectCourse(this)"
+                                style="margin: 15% 30%">
                             选择课程
                         </button>
 

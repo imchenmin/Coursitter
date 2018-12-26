@@ -190,7 +190,7 @@ $(document).ready(function () {
             $('#myModal h5')[0].innerHTML = currentCourse['note'];
             $('#myModal button')[1].id = i;
 
-            //TODO 课程卡片
+            // 课程卡片
             var classBox = $('#classBox');
             classBox.empty();
             var colorSet = ['w3-light-green', 'w3-lime', 'w3-khaki'];
@@ -575,3 +575,28 @@ function selectCourse(obj) {
 
 }
 
+//搜索框回车监听
+function enterSubmit(obj) {
+    //当enter 键按下后，需要执行的事件
+    var button = document.getElementById('search');
+    if (obj.keyCode == 13) {
+        button.click();
+        obj.returnValue = false;
+    }
+}
+
+//登出方法
+function logout() {
+    $.ajax({
+        type: 'GET',
+        url: "/searchLabel",
+        anysc: false,
+        data: datal,  //转化字符串
+        contentType: 'application/json',
+        dataType: 'json',
+        success: function (rdata) { //成功的话，得到消息
+            //rdata's type is json
+            //returnClass(data);
+        }
+    });
+}

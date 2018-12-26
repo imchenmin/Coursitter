@@ -156,3 +156,10 @@ tbody {
     width: 800px;
 
 }
+
+.logout {
+    background: url(../img/logout.png) left center no-repeat #fff;
+    height: 23px;
+    width: 23px;
+    background-size: contain;
+}
