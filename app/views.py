@@ -38,8 +38,9 @@ def login_view(request):
 
 # 需要logout表单
 def logout_view(request):
+    print("logout")
     logout(request)
-    return render(request, "user_login.html")
+    return HttpResponseRedirect("/login")
     # Redirect to a success page.
 
 

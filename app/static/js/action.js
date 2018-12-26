@@ -91,7 +91,7 @@ window.onload = function () {
             }
 
             window.class_data = rdata;
-            console.log(window.class_data)
+            console.log(window.class_data);
             $('#class_table').bootstrapTable('prepend', window.class_data);
             // refreshCourseTable(rdata["result"]);
             getHistory();
@@ -113,11 +113,11 @@ function getHistory() {
         contentType: 'application/json',
         dataType: 'json',
         success: function (rdata) {
-            // window.selectedCourse = rdata['result'];
-            alert(JSON.stringify(rdata));
             var temp = [];
             for (i in rdata) {
                 console.log(window.class_data[i]);
+                window.selectedCourse.push({'courseID':i})  ;
+
                 for(j in window.class_data){
                     if(window.class_data[j].courseID == i){
                         temp.push(window.class_data[j]);
@@ -208,7 +208,7 @@ $(document).ready(function () {
             $('#myModal h5')[0].innerHTML = currentCourse['note'];
             $('#myModal button')[1].id = i;
 
-            //TODO 课程卡片
+            // 课程卡片
             var classBox = $('#classBox');
             classBox.empty();
             var colorSet = ['w3-light-green', 'w3-lime', 'w3-khaki'];
@@ -590,4 +590,32 @@ function selectCourse(obj) {
         });
     }
 
+}
+
+//搜索框回车监听
+function enterSubmit(obj) {
+    //当enter 键按下后，需要执行的事件
+    var button = document.getElementById('search');
+    if (obj.keyCode == 13) {
+        button.click();
+        obj.returnValue = false;
+    }
+}
+
+//登出方法
+function logout() {
+    $.ajax({
+        type: 'GET',
+        url: "/logout",
+        anysc: false,
+        data: null,  //转化字符串
+        contentType: 'application/json',
+        dataType: 'html',
+        success: function () { //成功的话，得到消息
+            //rdata's type is json
+            //returnClass(data);
+            location.reload();
+            //$("#allBody").html();
+        }
+    });
 }
