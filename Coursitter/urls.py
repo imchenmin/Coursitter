@@ -28,5 +28,6 @@ urlpatterns = [
     path('classDELETE/', views.deleteClassDeal),
     path('checkClass/', views.checkClassDeal),
     path('getHistory/', views.getHistory),
+    path('getterminfo/', views.get_term_info)
 ]
 import app.write_result

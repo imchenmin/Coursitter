@@ -1,33 +1,3 @@
-// window.class_data = [{
-//     "courseName": "人工智能",
-//     "courseID": "CS304",
-//     "credit": 3,
-//     "note": "课程系统完整地讲解当今整地讲解当今整地讲解当今整地讲解当今主流当今整地对xxx...",
-//     "classes": [{
-//         "teachers": "唐柯",
-//         "classinfo": ["周二3-4节 荔园一栋101", "周五5-6节 荔园6栋403"],
-//         "classnum": 101,
-//         "period": [2, 2, 5, 3]
-//     },
-//         {
-//             "teachers": "唐柯",
-//             "classinfo": ["周二3-4节 荔园一栋101", "周三5-6节 荔园6栋403"],
-//             "classnum": 101,
-//             "period": [2, 2, 3, 3]
-//         }
-//     ]
-// },
-//     {
-//         "courseName": "面向对象",
-//         "courseID": "CS303",
-//         "classes": [{
-//             "teachers": "张誉群",
-//             "classinfo": ["周四3-4节 荔园一栋101", "周三5-6节 荔园6栋403"],
-//             "classnum": 101,
-//             "period": [4, 2, 3, 3]
-//         }]
-//     }
-// ];
 window.class_data = [];
 window.labels_title = {"Grade": "面向年级", "CourseType": "课程性质", "Departments": "院系", "day": "星期", "interval": "节次"};
 window.labels = {
@@ -48,7 +18,24 @@ window.onload = function () {
         document.getElementById("all_label").appendChild(labels_obj[label]);
     }
 
-    //alert("begin history");
+    $.ajax({
+        type: 'GET',
+        url: "/getterminfo",
+        anysc: false,
+        data: null,  //转化字符串
+        contentType: 'application/json',
+        dataType: 'json',
+        success: function (rdata) {
+            // window.selectedCourse = rdata['result'];
+            // insertCard(window.class_data, rdata['result']);
+            $('#studentID').html = rdata['studentID'];
+            $('#currentState').html = rdata['state'] + '<br/>' + '结束于：' + rdata['ddlInfo'];
+            alert($('#studentID').html);
+            alert($('#currentState').html);
+        }
+    });
+
+
     $.ajax({
         type: 'GET',
         url: "/allCourse",
@@ -60,6 +47,7 @@ window.onload = function () {
             //rdata's type is json
             //returnClass(data);
             //alert(JSON.stringify(rdata));
+
             var max_length = 23;
             rdata = rdata["result"];
             for (var i in rdata) {
@@ -78,7 +66,7 @@ window.onload = function () {
                             lecturer = allClass[d]['teachers'];
 
                         } else {
-                            if (lecturer === allClass[d]['teachers']) {
+                            if (lecturer !== allClass[d]['teachers']) {
                                 lecturer += '等';
                                 break;
                             }
@@ -91,7 +79,6 @@ window.onload = function () {
             }
 
             window.class_data = rdata;
-            console.log(window.class_data);
             $('#class_table').bootstrapTable('prepend', window.class_data);
             // refreshCourseTable(rdata["result"]);
             getHistory();
@@ -222,8 +209,14 @@ $(document).ready(function () {
                 var class_id = parseInt(c) + 1;
                 var class_head = class_id + '班  ' + classes[c]['teachers'];
                 // fixme 课程分行显示
-                var class_time = classes[c]['classinfo'];
-                classCard.innerHTML = class_head + class_time;
+
+
+                var class_time = classes[c]['classinfo'].split(',');
+                var content = '';
+                for (i in class_time) {
+                    content += class_time[i] + classes[c]['location'] + '<br/>';
+                }
+                classCard.innerHTML = '<br/>' + class_head + '<br/>' + content + '<br/>';
                 classBox.append(classCard)
             }
 
@@ -535,12 +528,6 @@ function select_label(obj) {
 }
 
 
-// function selectCourse(obj) {
-//     // alert(obj.id);
-//     var s = window.class_data[parseInt(obj.id)];
-//     insertCard([s]);
-//
-// }
 function deleteMainStageCourse(courseID) {
     for (var i in window.selectedCourse) {
         if (window.selectedCourse[i]['courseID'] === courseID) {
@@ -560,7 +547,6 @@ function selectCourse(obj) {
         obj.innerHTML = "选择课程";
         obj.value = "unselected";
         obj.setAttribute("class", 'w3-btn c5');
-
 
         //TODO 课程表删除已选课程的方法
         deleteById(courseID);
