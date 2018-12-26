@@ -518,11 +518,16 @@ function select_label(obj) {
 }
 
 
-// function selectCourse(obj) {
-//     // alert(obj.id);
-//     var s = window.class_data[parseInt(obj.id)];
-//     insertCard([s]);
-//
+
+function deleteMainStageCourse(courseID) {
+    for (var i in window.selectedCourse) {
+        if (window.selectedCourse[i]['courseID'] === courseID) {
+            window.selectedCourse.splice(i, 1);
+            break;
+        }
+    }
+}
+
 // }
 function selectCourse(obj) {
     // alert(obj.id);
@@ -534,12 +539,6 @@ function selectCourse(obj) {
         obj.innerHTML = "选择课程";
         obj.value = "unselected";
         obj.setAttribute("class", 'w3-btn c5');
-        for (var i in window.selectedCourse) {
-            if (window.selectedCourse[i]['courseID'] === courseID) {
-                window.selectedCourse.splice(i, 1);
-                break;
-            }
-        }
 
         //TODO 课程表删除已选课程的方法
         deleteById(courseID);
