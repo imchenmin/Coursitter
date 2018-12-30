@@ -317,11 +317,11 @@ def dele_class(student_id, class_id):
         ele.status = RelStuCtable.objects.get(status='cancel')
         ele.save()
         if get_status() is None:
-            ele1 = StuClasstable.objects.order_by('coin').get(student_id=student_id, classobj_id=class_id)
+            ele1 = StuClasstable.objects.order_by('-coin').filter(classobj_id=class_id, status__status='waiting')
             if ele1 is None:
                 return 0
             ele2 = ele1[0]
-            ele2.status = RelStuCtable.objects.get(status='cancel')
+            ele2.status = RelStuCtable.objects.get(status='selected')
             ele2.save()
         return 1
     except Exception as e:
