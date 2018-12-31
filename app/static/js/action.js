@@ -12,6 +12,7 @@ window.changeableTemp = true;
 
 window.selectedCourse = [];
 
+//加载窗口时执行
 window.onload = function () {
     document.getElementById("commit_Edit").style.display = "none";
     document.getElementById("all_label").style.display = "none";
@@ -19,7 +20,7 @@ window.onload = function () {
     for (var label in labels_obj) {
         document.getElementById("all_label").appendChild(labels_obj[label]);
     }
-
+    //获得所有课程信息
     $.ajax({
         type: 'GET',
         url: "/getterminfo",
@@ -38,12 +39,10 @@ window.onload = function () {
             }else {
                 window.changeableTemp = true;
             }
-            //alert($('#studentID').html);
-            //alert($('#currentState').html);
         }
     });
 
-
+    //获得已选课程的信息
     $.ajax({
         type: 'GET',
         url: "/allCourse",
@@ -93,12 +92,13 @@ window.onload = function () {
             
         }
     });
-    
+    // 加载选课表
     loadCourseTable();
 
 
 };
 
+// 获得选课历史
 function getHistory() {
     $.ajax({
         type: 'GET',
@@ -124,7 +124,7 @@ function getHistory() {
         }
     });
 }
-
+// 加载课程表
 function loadCourseTable() {
     updateRcoin();
     var oCoin = document.getElementById('rcoin');
@@ -144,7 +144,7 @@ function loadCourseTable() {
     // oBtn_insert.onclick = "insertCard()";
 }
 
-
+// 加载显示课程的表格
 $(document).ready(function () {
 
     $('#class_table').bootstrapTable({
@@ -216,7 +216,7 @@ $(document).ready(function () {
                 classCard.setAttribute('class', classType);
                 var class_id = parseInt(c) + 1;
                 var class_head = class_id + '班  ' + classes[c]['teachers'];
-                // fixme 课程分行显示
+
 
                 var classinfo = classes[c]['classinfo'];
                 var class_time = classinfo.substring(0,classinfo.lastIndexOf(',')).split(',');
@@ -259,7 +259,7 @@ $(document).ready(function () {
     });
 });
 
-
+//刷新课表中显示的内容
 function refreshCourseTable(rdata) {
     $('#class_table').bootstrapTable('removeAll');
     var returnCourse = [];
@@ -274,6 +274,7 @@ function refreshCourseTable(rdata) {
     $('#class_table').bootstrapTable('prepend', returnCourse);
 }
 
+//按课程名搜索课程
 function search_class() {
     var data = $('#searchContent').val(); //string
 
@@ -300,34 +301,9 @@ function search_class() {
     }
 
 
-    // var rdata = [{
-    //     "courseName": "面向对象",
-    //     "courseID": "CS303",
-    //     "classes": [{
-    //         "teachers": "张誉群",
-    //         "classinfo": ["周四3-4节 荔园一栋101", "周三5-6节 荔园6栋403"],
-    //         "classnum": 101,
-    //         "period": [4, 2, 3, 3]
-    //     }]
-    // }];
-
-
 }
 
-function pull_course() {
-    window.class_data = [{
-        "courseName": "面向对象",
-        "courseID": "CS303",
-        "classes": [{
-            "teachers": "张誉群",
-            "classinfo": ["周四3-4节 荔园一栋101", "周三5-6节 荔园6栋403"],
-            "classnum": 101,
-            "period": [4, 2, 3, 3]
-        }]
-    }];
-
-}
-
+//加载标签
 function showFullLabel() {
     document.getElementById("label").classList.replace("col-md-1", "col-md-8");
     document.getElementById("Edit").style.display = "none";
@@ -337,6 +313,7 @@ function showFullLabel() {
 
 }
 
+//根据标签搜索课程
 function searchByLabel() {
     var datal = {"Grade": [], "Departments": [], "CourseType": [], "interval": [], "day": []}; //dictionary
 
@@ -385,40 +362,9 @@ function searchByLabel() {
 
     }
 
-
-    // var rdata = [{
-    //     "courseName": "人工智能",
-    //     "courseID": "CS303",
-    //     "lecturer": "唐珂",
-    //     "classes": [{
-    //         "teachers": "唐珂",
-    //         "classinfo": ["周四3-4节 荔园一栋101", "周三5-6节 荔园6栋403"],
-    //         "classnum": 101,
-    //         "period": [4, 2, 3, 3]
-    //     }]
-    // }, {
-    //     "courseName": "人工智能",
-    //     "courseID": "CS303",
-    //     "classes": [{
-    //         "teachers": "唐珂",
-    //         "classinfo": ["周四3-4节 荔园一栋101", "周三5-6节 荔园6栋403"],
-    //         "classnum": 101,
-    //         "period": [4, 2, 3, 3]
-    //     }]
-    // }, {
-    //     "courseName": "人工智能",
-    //     "courseID": "CS303",
-    //     "classes": [{
-    //         "teachers": "唐珂",
-    //         "classinfo": ["周四3-4节 荔园一栋101", "周三5-6节 荔园6栋403"],
-    //         "classnum": 101,
-    //         "period": [4, 2, 3, 3]
-    //     }]
-    // }];
-    // refreshCourseTable(rdata);
-
 }
 
+// 显示选中课程
 function showSelectedLabel() {
     document.getElementById("label").classList.replace("col-md-8", "col-md-1");
     document.getElementById("commit_Edit").style.display = "none";
@@ -429,6 +375,7 @@ function showSelectedLabel() {
     searchByLabel();
 }
 
+// 生成标签
 function generate_labels() {
 
 
@@ -477,7 +424,7 @@ function copy(obj) {
     }
     return newobj;
 }
-
+//选择标签的方法
 function select_label(obj) {
     // 标签数量最大值
     if (obj.title === "unselected") {
@@ -520,7 +467,7 @@ function select_label(obj) {
     }
 }
 
-
+// 删除选中库中的课程
 function deleteMainStageCourse(courseID) {
     for (var i in window.selectedCourse) {
         if (window.selectedCourse[i]['courseID'] === courseID) {
@@ -529,7 +476,7 @@ function deleteMainStageCourse(courseID) {
         }
     }
 }
-
+// 选择课程
 function selectCourse(obj) {
     // alert(obj.id);
     var course = window.class_data[parseInt(obj.id)];
@@ -541,7 +488,6 @@ function selectCourse(obj) {
         obj.value = "unselected";
         obj.setAttribute("class", 'w3-btn c5');
 
-        //TODO 课程表删除已选课程的方法
         deleteById(courseID);
     } else {
         $.ajax({
